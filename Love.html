@@ -11,17 +11,21 @@
         .instructions { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #f1c40f; font-size: 0.95em; }
         .step { display: none; }
         .step.active { display: block; }
-        .question { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+        .question-block { display: none; }
+        .question-block.active { display: block; }
+        .question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
         .input-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        input[type="number"] { width: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1.1em; }
-        .btn-container { display: flex; justify-content: center; margin-top: 30px; gap: 20px; }
-        button { padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        input[type="number"] { width: 60px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1.1em; }
+        .btn-container { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
+        button { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .btn-next { background: #e74c3c; color: white; }
+        .btn-prev { background: #95a5a6; color: white; }
         .btn-finish { background: #27ae60; color: white; }
+        .btn-outline { border: 2px solid #ccc; background: transparent; color: #666; }
         #results { display: none; margin-top: 30px; text-align: center; }
         .chart-container { position: relative; height: 450px; width: 100%; margin: 20px 0; }
         .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; }
-        .handover-screen { text-align: center; padding: 50px 20px; }
+        .resume-banner { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; border: 1px solid #c3e6cb; }
     </style>
 </head>
 <body>
@@ -29,60 +33,87 @@
 <div class="container">
     <a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a>
     
+    <div id="resume-alert" class="resume-banner">
+        Existing progress found! You can resume or <a href="#" onclick="clearData()" style="color: #155724; font-weight: bold;">start fresh</a>.
+    </div>
+
     <div id="setup-step" class="step active">
         <h1>Love Triangle Assessment</h1>
         <div class="instructions">
-            <strong>Private Comparison Mode:</strong> Partners take the test one at a time. Your answers will be hidden from each other until the final results are generated.
+            <strong>Privacy Mode:</strong> Partners take the test one at a time. Progress is automatically saved locally so you won't lose your work.
         </div>
         <h3>Select Mode:</h3>
-        <button class="btn-next" onclick="startTest('solo')">Solo Assessment</button>
-        <button class="btn-next" style="background:#3498db" onclick="startTest('couple')">Couple Assessment</button>
+        <div class="btn-container">
+            <button class="btn-next" onclick="startTest('solo')" style="flex:1;">Solo Assessment</button>
+            <button class="btn-next" style="background:#3498db; flex:1;" onclick="startTest('couple')">Couple Assessment</button>
+        </div>
+        <button class="btn-outline" style="width: 100%; margin-top: 15px;" onclick="clearData()">Wipe Data & Reset</button>
     </div>
 
     <div id="test-step" class="step">
         <h2 id="user-title">Partner A's Turn</h2>
-        <p id="sub-instr">Answer honestly. Your partner will not see these selections.</p>
+        <div class="instructions">
+            <strong>Scale:</strong> 1 = Never, 3 = Sometimes, 5 = Always. 
+        </div>
         
-        <div id="questions-area">
-            </div>
+        <div id="questions-wrapper"></div>
 
         <div class="btn-container">
-            <button class="btn-finish" id="main-action-btn" onclick="processTurn()">Submit My Answers</button>
+            <button class="btn-prev" id="back-btn" onclick="prevPage()">Back</button>
+            <button class="btn-next" id="next-btn" onclick="nextPage()">Next Page</button>
         </div>
     </div>
 
-    <div id="handover-step" class="step handover-screen">
+    <div id="handover-step" class="step" style="text-align: center; padding: 50px 0;">
         <h2>Partner A Complete!</h2>
         <p>Please hand the device to <strong>Partner B</strong>.</p>
-        <p>Partner A, please look away so your partner can answer privately.</p>
+        <p><em>Partner A, please look away so your partner can answer privately.</em></p>
         <button class="btn-next" style="background:#3498db" onclick="startPartnerB()">Partner B: Start My Turn</button>
     </div>
 
     <div id="results" class="step">
-        <h2>Comparison Triangle</h2>
+        <h2>Comparison Results</h2>
         <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
         <div id="analysisText" class="analysis-box"></div>
-        <button onclick="location.reload()" style="margin-top:20px; background:#95a5a6; color:white;">Restart Assessment</button>
+        <button onclick="clearData()" style="margin-top:20px; background:#95a5a6; color:white;">Start New Assessment</button>
     </div>
 </div>
 
 <script>
     let mode = 'solo';
+    let currentPage = 0;
+    let currentTurn = 'A';
     let partnerA_Scores = { int: 0, pas: 0, com: 0 };
     let partnerB_Scores = { int: 0, pas: 0, com: 0 };
-    let myChart = null;
 
     const questions = [
         { t: "I have a warm relationship with my partner.", c: "int" },
         { t: "I receive considerable emotional support from my partner.", c: "int" },
         { t: "I value my partner greatly in my life.", c: "int" },
+        { t: "I feel that my partner really understands me.", c: "int" },
+        { t: "I feel that I can really trust my partner.", c: "int" },
         { t: "My relationship is very romantic.", c: "pas" },
         { t: "I find my partner to be very personally attractive.", c: "pas" },
         { t: "I cannot imagine another person making me as happy.", c: "pas" },
+        { t: "I find myself thinking about my partner often.", c: "pas" },
+        { t: "There is something almost 'magical' about our relationship.", c: "pas" },
         { t: "I view my commitment as a solid one.", c: "com" },
         { t: "I have confidence in the stability of my relationship.", c: "com" },
-        { t: "I expect my love to last forever.", c: "com" }
+        { t: "I expect my love to last forever.", c: "com" },
+        { t: "I view my relationship as permanent.", c: "com" },
+        { t: "I feel a sense of responsibility toward my partner.", c: "com" }
     ];
+
+    window.onload = function() {
+        if(localStorage.getItem('pA_Data')) {
+            document.getElementById('resume-alert').style.display = 'block';
+        }
+    }
+
+    function clearData() {
+        localStorage.clear();
+        location.reload();
+    }
 
     function showStep(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -92,34 +123,83 @@
 
     function startTest(m) {
         mode = m;
+        const savedA = localStorage.getItem('pA_Data');
+        if(savedA) partnerA_Scores = JSON.parse(savedA);
+        
         showStep('test-step');
         renderQuestions();
     }
 
     function renderQuestions() {
-        let html = '';
-        questions.forEach((q, i) => {
-            html += `<div class="question">
-                <label>${i+1}. ${q.t}</label>
-                <div class="input-row">Score (1-5): <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"></div>
-            </div>`;
-        });
-        document.getElementById('questions-area').innerHTML = html;
+        const wrapper = document.getElementById('questions-wrapper');
+        wrapper.innerHTML = '';
+        const savedInputs = JSON.parse(localStorage.getItem(`inputs_${currentTurn}`)) || {};
+
+        for (let i = 0; i < 3; i++) {
+            let block = document.createElement('div');
+            block.className = `question-block ${i === currentPage ? 'active' : ''}`;
+            block.id = `page-${i}`;
+            
+            questions.slice(i * 5, (i + 1) * 5).forEach((q, idx) => {
+                const qNum = (i * 5) + idx;
+                const val = savedInputs[qNum] || 3;
+                block.innerHTML += `
+                    <div class="question">
+                        <label>${qNum + 1}. ${q.t}</label>
+                        <div class="input-row">Score: <input type="number" class="score-input" min="1" max="5" value="${val}" data-cat="${q.cat}" data-qnum="${qNum}" onchange="saveInputState()"></div>
+                    </div>`;
+            });
+            wrapper.appendChild(block);
+        }
+        updateButtons();
     }
 
-    function processTurn() {
+    function saveInputState() {
+        let state = {};
+        document.querySelectorAll('.score-input').forEach(input => {
+            state[input.dataset.qnum] = input.value;
+        });
+        localStorage.setItem(`inputs_${currentTurn}`, JSON.stringify(state));
+    }
+
+    function updateButtons() {
+        document.getElementById('back-btn').style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+        document.getElementById('next-btn').innerText = currentPage === 2 ? 'Submit My Turn' : 'Next Page';
+    }
+
+    function nextPage() {
+        if (currentPage < 2) {
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            currentPage++;
+            document.getElementById(`page-${currentPage}`).classList.add('active');
+            updateButtons();
+            window.scrollTo(0,0);
+        } else {
+            submitTurn();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 0) {
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            currentPage--;
+            document.getElementById(`page-${currentPage}`).classList.add('active');
+            updateButtons();
+            window.scrollTo(0,0);
+        }
+    }
+
+    function submitTurn() {
         let scores = { int: 0, pas: 0, com: 0 };
         document.querySelectorAll('.score-input').forEach(input => {
             scores[input.dataset.cat] += parseInt(input.value);
         });
 
-        if (partnerA_Scores.int === 0) {
+        if (currentTurn === 'A') {
             partnerA_Scores = scores;
-            if (mode === 'couple') {
-                showStep('handover-step');
-            } else {
-                finalizeResults();
-            }
+            localStorage.setItem('pA_Data', JSON.stringify(scores));
+            if (mode === 'couple') showStep('handover-step');
+            else finalizeResults();
         } else {
             partnerB_Scores = scores;
             finalizeResults();
@@ -127,60 +207,20 @@
     }
 
     function startPartnerB() {
+        currentTurn = 'B';
+        currentPage = 0;
         document.getElementById('user-title').innerText = "Partner B's Turn";
         showStep('test-step');
-        renderQuestions(); // Resets all values to 3
+        renderQuestions();
     }
 
     function finalizeResults() {
         showStep('results');
         const ctx = document.getElementById('loveTriangleChart').getContext('2d');
-        
-        let datasets = [{
-            label: mode === 'couple' ? 'Partner A' : 'Your Scores',
-            data: [partnerA_Scores.int, partnerA_Scores.com, partnerA_Scores.pas],
-            backgroundColor: 'rgba(231, 76, 60, 0.4)',
-            borderColor: '#e74c3c',
-            borderWidth: 3
-        }];
-
-        if (mode === 'couple') {
-            datasets.push({
-                label: 'Partner B',
-                data: [partnerB_Scores.int, partnerB_Scores.com, partnerB_Scores.pas],
-                backgroundColor: 'rgba(52, 152, 219, 0.4)',
-                borderColor: '#3498db',
-                borderWidth: 3
-            });
-        }
-
-        myChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Intimacy (Top)', 'Commitment (Right)', 'Passion (Left)'],
-                datasets: datasets
-            },
-            options: {
-                scales: { r: { suggestedMax: 15, ticks: { display: false } } },
-                maintainAspectRatio: false
-            }
-        });
-
-        // Analysis
-        let html = `<h3>Analysis</h3>`;
-        if (mode === 'couple') {
-            const gaps = [
-                Math.abs(partnerA_Scores.int - partnerB_Scores.int),
-                Math.abs(partnerA_Scores.com - partnerB_Scores.com),
-                Math.abs(partnerA_Scores.pas - partnerB_Scores.pas)
-            ];
-            const pillars = ["Intimacy", "Commitment", "Passion"];
-            const maxIdx = gaps.indexOf(Math.max(...gaps));
-            html += `<p>Your triangles are overlapping. The largest gap is in <strong>${pillars[maxIdx]}</strong>. This indicates you have different perceptions of this pillar.</p>`;
-        } else {
-            html += `<p>Your strongest pillar is <strong>Intimacy</strong>. This represents the emotional foundation of your relationship.</p>`;
-        }
-        document.getElementById('analysisText').innerHTML = html;
+        const ds = [{ label: mode==='couple'?'A':'You', data: [partnerA_Scores.int, partnerA_Scores.com, partnerA_Scores.pas], backgroundColor: 'rgba(231, 76, 60, 0.4)', borderColor: '#e74c3c', borderWidth: 3 }];
+        if (mode === 'couple') ds.push({ label: 'B', data: [partnerB_Scores.int, partnerB_Scores.com, partnerB_Scores.pas], backgroundColor: 'rgba(52, 152, 219, 0.4)', borderColor: '#3498db', borderWidth: 3 });
+        new Chart(ctx, { type: 'radar', data: { labels: ['Intimacy', 'Commitment', 'Passion'], datasets: ds }, options: { scales: { r: { suggestedMax: 25, ticks: { display: false } } }, maintainAspectRatio: false } });
+        document.getElementById('analysisText').innerHTML = `<h3>Evaluation Ready</h3><p>Your results are based on 15 scientific data points. You can now discuss these areas with your partner.</p>`;
     }
 </script>
 </body>
