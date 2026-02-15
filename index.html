@@ -1,77 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.3">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Growth Tools</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; line-height: 1.6; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .section { margin-bottom: 40px; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+        h2 { border-bottom: 2px solid #34495e; padding-bottom: 10px; color: #2c3e50; }
+        button { width: 100%; padding: 15px; background: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; }
+        input[type=range] { width: 100%; margin: 15px 0; }
+        #timerDisplay { font-size: 2em; font-weight: bold; color: #e74c3c; text-align: center; margin: 10px 0; display: none; }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;div style="font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; max-width: 650px; margin: 20px auto; padding: 30px; border: 1px solid #d1d8e0; border-radius: 15px; background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.08);"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2 style="text-align: center; color: #2f3640; border-bottom: 3px solid #e74c3c; padding-bottom: 10px;"&gt;The F.R.P. Accuracy Scale&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p style="text-align: center; color: #7f8c8d; font-size: 0.9em; margin-bottom: 25px;"&gt;"Fences Ruin Partners" — Identify the root of your control.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;form id="frpDeepForm"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="background: #fff5f5; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 6px solid #e74c3c;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;strong style="color:#e74c3c;"&gt;F - FEAR Score:&lt;/strong&gt;&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span style="font-size:0.8em; color:#666;"&gt;Rate your anxiety/need to protect:&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="range" name="f_val" min="4" max="20" value="10" style="width:100%; margin-top:10px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="background: #f0f7ff; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 6px solid #3498db;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;strong style="color:#3498db;"&gt;R - RIGIDITY Score:&lt;/strong&gt;&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span style="font-size:0.8em; color:#666;"&gt;Rate your need for order/rules:&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="range" name="r_val" min="4" max="20" value="10" style="width:100%; margin-top:10px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="background: #f4fdf4; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid #27ae60;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;strong style="color:#27ae60;"&gt;P - PRIDE Score:&lt;/strong&gt;&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span style="font-size:0.8em; color:#666;"&gt;Rate your need to be right/competent:&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="range" name="p_val" min="4" max="20" value="10" style="width:100%; margin-top:10px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" onclick="analyzeFRP()" style="background:#2f3640; color:white; padding:16px; width:100%; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:1.1em; transition:0.3s;"&gt;Analyze My Clinical Profile&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/form&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="frpDeepResult" style="margin-top: 30px; display:none; padding: 20px; border-radius: 10px; border: 1px solid #ddd; line-height:1.6;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">function analyzeFRP() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const form = new FormData(document.getElementById('frpDeepForm'));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const f = parseInt(form.get('f_val'));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const r = parseInt(form.get('r_val'));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const p = parseInt(form.get('p_val'));</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const res = document.getElementById('frpDeepResult');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>res.style.display = 'block';</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>let lead = "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let advice = "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let color = "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (f &gt;= r &amp;&amp; f &gt;= p) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>lead = "Primary Root: FEAR";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color = "#e74c3c";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>advice = "&lt;strong&gt;The Catastrophe Lens:&lt;/strong&gt; Your control is an attempt to prevent pain. You see your partner as 'unsafe' or 'unreliable.' &lt;br&gt;&lt;br&gt;&lt;strong&gt;Repair Action:&lt;/strong&gt; Practice 'Surrender Sessions.' Let your partner manage a high-stakes task (like finances or travel) without your input. Observe your anxiety without acting on it.";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (r &gt;= f &amp;&amp; r &gt;= p) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>lead = "Primary Root: RIGIDITY";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color = "#3498db";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>advice = "&lt;strong&gt;The Perfection Lens:&lt;/strong&gt; You value 'The Way' more than the person. You treat your relationship like an operations manual.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Repair Action:&lt;/strong&gt; The 'Gray Area' Exercise. Purposely do something 'the wrong way' once a day. Learn that the relationship survives imperfection.";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>lead = "Primary Root: PRIDE";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>color = "#27ae60";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>advice = "&lt;strong&gt;The Pedestal Lens:&lt;/strong&gt; You view yourself as the 'Parent' and your partner as the 'Child.' This kills respect and intimacy.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Repair Action:&lt;/strong&gt; The 'Equality Audit.' Ask your partner for their opinion on three things today and &lt;em&gt;accept their influence&lt;/em&gt; completely, even if you disagree.";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>res.innerHTML = "&lt;h3 style='color:"+color+"; margin-top:0;'&gt;"+lead+"&lt;/h3&gt;" + advice;</p>
-<p class="p1">}</p>
-<p class="p1">&lt;/script&gt;</p>
+
+<div class="container">
+    <h1>Relationship Toolkit</h1>
+
+    <div class="section" style="background: #fffcf5; border: 1px solid #f1c40f;">
+        <h2>The 60-Second Pause</h2>
+        <p>Before you act on an impulse to control, take a breath. Let the adrenaline fade.</p>
+        <div id="timerDisplay">60</div>
+        <button onclick="startTimer()" style="background:#f39c12;">Start My Pause</button>
+    </div>
+
+    <div class="section">
+        <h2>The F.R.P. Assessment</h2>
+        <p>Identify your root of control: <strong>F</strong>ear, <strong>R</strong>igidity, or <strong>P</strong>ride.</p>
+        <label><strong>Fear Score (4-20):</strong> Anxiety about mistakes.</label>
+        <input type="range" id="f_val" min="4" max="20" value="10">
+        <label><strong>Rigidity Score (4-20):</strong> Need for rules.</label>
+        <input type="range" id="r_val" min="4" max="20" value="10">
+        <label><strong>Pride Score (4-20):</strong> Need to be "right."</label>
+        <input type="range" id="p_val" min="4" max="20" value="10">
+        <button onclick="runFRP()">Analyze Root</button>
+        <div id="frpRes" class="result-box"></div>
+    </div>
+
+    <div class="section">
+        <h2>The Motive Switch</h2>
+        <p>Flip from "Avoidance" (Away) to "Approach" (Toward).</p>
+        <select id="motiveIn" style="width:100%; padding:10px; margin-bottom:10px;">
+            <option value="mad">I don't want them to be mad.</option>
+            <option value="fail">I'm afraid things will fail.</option>
+            <option value="reject">I don't want to feel rejected.</option>
+        </select>
+        <button onclick="runSwitch()" style="background:#27ae60;">Flip the Motive</button>
+        <div id="motiveRes" class="result-box" style="background:#f4f9f4; border-left:6px solid #27ae60;"></div>
+    </div>
+</div>
+
+<script>
+function startTimer() {
+    let timeLeft = 60;
+    const display = document.getElementById('timerDisplay');
+    display.style.display = 'block';
+    const interval = setInterval(() => {
+        timeLeft--;
+        display.innerHTML = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            display.innerHTML = "Breath Complete. Now choose equality.";
+        }
+    }, 1000);
+}
+
+function runFRP() {
+    const f = parseInt(document.getElementById('f_val').value);
+    const r = parseInt(document.getElementById('r_val').value);
+    const p = parseInt(document.getElementById('p_val').value);
+    const res = document.getElementById('frpRes');
+    res.style.display = 'block';
+    res.style.background = '#f9f9f9';
+    let lead = (f >= r && f >= p) ? "FEAR (Anxiety)" : (r >= f && r >= p) ? "RIGIDITY (Rules)" : "PRIDE (Superiority)";
+    res.innerHTML = "<strong>Your Primary Root: " + lead + "</strong><br>The fence you've built is based on " + lead.toLowerCase() + ". Your goal is to Yield and Accept Influence today.";
+}
+
+function runSwitch() {
+    const val = document.getElementById('motiveIn').value;
+    const res = document.getElementById('motiveRes');
+    res.style.display = 'block';
+    let text = (val === 'mad') ? "Switch to: 'I value our peace.'" : (val === 'fail') ? "Switch to: 'I trust our growth.'" : "Switch to: 'I desire closeness.'";
+    res.innerHTML = "<strong>The Switch:</strong> " + text;
+}
+</script>
 </body>
 </html>
