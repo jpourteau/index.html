@@ -4,9 +4,17 @@
     <title>My Assessment Hub</title>
     <style>
         body { font-family: sans-serif; text-align: center; padding: 50px; background: #f4f7f9; }
-        .card { background: white; padding: 20px; margin: 10px auto; max-width: 400px; border-radius: 10px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        a { text-decoration: none; color: #2c3e50; font-weight: bold; font-size: 1.2em; }
+        .card { 
+            background: white; 
+            padding: 20px; 
+            margin: 20px auto; 
+            max-width: 400px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Fixed the shadow here */
+        }
+        a { text-decoration: none; color: #2c3e50; font-weight: bold; font-size: 1.2em; display: block; }
         h1 { color: #333; }
+        .description { color: #666; font-size: 0.9em; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -15,7 +23,13 @@
 
     <div class="card">
         <a href="Love.html">Love & Relationship Assessment</a>
+        <p class="description">Analyze your Love Triangle alignment.</p>
     </div>
 
-    </body>
+    <div class="card">
+        <a href="communication.html">Communication Style Assessment</a>
+        <p class="description">Identify defensive patterns in conflict.</p>
+    </div>
+
+</body>
 </html>
