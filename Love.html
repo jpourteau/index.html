@@ -24,7 +24,6 @@
         #results { display: none; margin-top: 30px; text-align: center; }
         .chart-container { position: relative; height: 450px; width: 100%; margin: 20px 0; }
         .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; line-height: 1.6; }
-        .gap-highlight { color: #e74c3c; font-weight: bold; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -34,8 +33,8 @@
     <h1>Love Triangle Assessment</h1>
 
     <div class="instructions">
-        <strong>Scale:</strong> 1 = Never/Not at all, 3 = Sometimes, 5 = Always/Completely. <br>
-        This professional assessment measures 15 data points to map your relationship onto the Sternberg Triangle.
+        <strong>Scale:</strong> 1 = Never, 3 = Sometimes, 5 = Always. <br>
+        This professional assessment measures 15 data points to map your relationship.
     </div>
 
     <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
@@ -47,12 +46,12 @@
         <label><input type="radio" name="mode" value="couple" onclick="togglePartnerFields()"> Couple (Compare Differences)</label>
         <div class="btn-container">
             <div></div>
-            <button class="btn-next" onclick="nextStep(2)">Begin 15-Question Assessment →</button>
+            <button class="btn-next" onclick="nextStep(2)">Begin Assessment →</button>
         </div>
     </div>
 
     <div id="step2" class="step">
-        <h3>Pillar: Intimacy (Emotional Closeness)</h3>
+        <h3>Pillar: Intimacy</h3>
         <div class="question"><label>1. I feel that I really understand my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>2. I share extremely personal information with my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>3. I feel that I can really trust my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
@@ -62,19 +61,79 @@
     </div>
 
     <div id="step3" class="step">
-        <h3>Pillar: Passion (Romance & Chemistry)</h3>
+        <h3>Pillar: Passion</h3>
         <div class="question"><label>6. My relationship is very romantic.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>7. I find my partner to be very personally attractive.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>8. I cannot imagine another person making me as happy.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>9. There is something almost magical about our relationship.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
-        <div class="question"><label>10. I find myself thinking about my partner often during the day.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>10. I find myself thinking about my partner often.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
         <div class="btn-container"><button class="btn-prev" onclick="nextStep(2)">Back</button><button class="btn-next" onclick="nextStep(4)">Next: Commitment →</button></div>
     </div>
 
     <div id="step4" class="step">
-        <h3>Pillar: Commitment (Decision & Stability)</h3>
-        <div class="question"><label>11. I view my commitment to my partner as a solid one.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <h3>Pillar: Commitment</h3>
+        <div class="question"><label>11. I view my commitment as a solid one.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>12. I have confidence in the stability of my relationship.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
-        <div class="question"><label>13. I expect my love for my partner to last for the rest of my life.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>13. I expect my love to last forever.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
         <div class="question"><label>14. I could not let anything get in the way of my commitment.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
-        <div class="question"><label>15. I am certain of my love for my partner.</label><div class="input-row">You: <input type="number" class="p1-com"
+        <div class="question"><label>15. I am certain of my love.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="btn-container"><button class="btn-prev" onclick="nextStep(3)">Back</button><button class="btn-finish" onclick="showResults()">Generate Triangle</button></div>
+    </div>
+
+    <div id="results">
+        <h2>Your Results</h2>
+        <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
+        <div id="analysisText" class="analysis-box"></div>
+    </div>
+</div>
+
+<script>
+    let myChart = null;
+
+    function togglePartnerFields() {
+        const isCouple = document.querySelector('input[name="mode"]:checked').value === 'couple';
+        document.querySelectorAll('.partner-input').forEach(el => el.style.display = isCouple ? 'inline' : 'none');
+    }
+
+    function nextStep(stepNum) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + stepNum).classList.add('active');
+        document.getElementById('progress').style.width = (stepNum / 4 * 100) + '%';
+        window.scrollTo(0,0);
+    }
+
+    function showResults() {
+        const isCouple = document.querySelector('input[name="mode"]:checked').value === 'couple';
+        const sum = (q) => Array.from(document.querySelectorAll(q)).reduce((a, b) => a + (parseInt(b.value) || 0), 0);
+        
+        const p1Data = [sum('.p1-int'), sum('.p1-com'), sum('.p1-pas')];
+        const p2Data = isCouple ? [sum('.p2-int'), sum('.p2-com'), sum('.p2-pas')] : null;
+
+        document.getElementById('results').style.display = 'block';
+        renderTriangle(p1Data, p2Data);
+
+        let [i, c, p] = p1Data;
+        const t = 18;
+        let style = (i>=t && p>=t && c>=t) ? "Consummate Love" : (i>=t && p>=t) ? "Romantic Love" : (i>=t && c>=t) ? "Companionate Love" : "Developing Love";
+
+        let html = `<h3>Type: ${style}</h3>`;
+        if(isCouple) {
+            const gaps = [Math.abs(p1Data[0]-p2Data[0]), Math.abs(p1Data[1]-p2Data[1]), Math.abs(p1Data[2]-p2Data[2])];
+            const maxGap = Math.max(...gaps);
+            const pillars = ["Intimacy", "Commitment", "Passion"];
+            html += `<p><strong>Largest Gap:</strong> ${pillars[gaps.indexOf(maxGap)]} (${maxGap} pts)</p>`;
+        }
+        document.getElementById('analysisText').innerHTML = html;
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function renderTriangle(p1, p2) {
+        const ctx = document.getElementById('loveTriangleChart').getContext('2d');
+        if (myChart) myChart.destroy();
+        const ds = [{ label: 'You', data: p1, backgroundColor: 'rgba(231, 76, 60, 0.4)', borderColor: '#e74c3c' }];
+        if(p2) ds.push({ label: 'Partner', data: p2, backgroundColor: 'rgba(52, 152, 219, 0.4)', borderColor: '#3498db' });
+        myChart = new Chart(ctx, { type: 'radar', data: { labels: ['Intimacy', 'Commitment', 'Passion'], datasets: ds }, options: { scales: { r: { suggestedMax: 25 } }, maintainAspectRatio: false } });
+    }
+</script>
+</body>
+</html>
