@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Triangle Assessment</title>
+    <title>Sternberg Love Triangle Assessment</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .container { max-width: 750px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
         .instructions { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #f1c40f; font-size: 0.95em; }
         .progress-container { width: 100%; background: #eee; height: 8px; border-radius: 4px; margin-bottom: 30px; }
         .progress-bar { width: 25%; height: 100%; background: #e74c3c; border-radius: 4px; transition: 0.3s; }
@@ -22,9 +22,9 @@
         .btn-prev { background: #95a5a6; color: white; }
         .btn-finish { background: #27ae60; color: white; }
         #results { display: none; margin-top: 30px; text-align: center; }
-        .chart-container { position: relative; height: 400px; width: 100%; margin: 20px 0; }
-        .analysis-box { text-align: left; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; }
-        .gap-highlight { color: #e74c3c; font-weight: bold; }
+        .chart-container { position: relative; height: 450px; width: 100%; margin: 20px 0; }
+        .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; line-height: 1.6; }
+        .gap-highlight { color: #e74c3c; font-weight: bold; font-size: 1.1em; }
     </style>
 </head>
 <body>
@@ -34,21 +34,47 @@
     <h1>Love Triangle Assessment</h1>
 
     <div class="instructions">
-        <strong>Scale:</strong> 1 = Never, 3 = Sometimes, 5 = Always. <br>
-        This reveals your "Love Shape" based on Sternberg's Triangular Theory.
+        <strong>Scale:</strong> 1 = Never/Not at all, 3 = Sometimes, 5 = Always/Completely. <br>
+        This professional assessment measures 15 data points to map your relationship onto the Sternberg Triangle.
     </div>
 
     <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
 
     <div id="step1" class="step active">
         <h3>Step 1: Setup</h3>
-        <p>This assessment defaults to <strong>Solo</strong>. Choose <strong>Couple</strong> if you wish to enter scores for both partners and compare your triangles.</p>
+        <p>Choose your assessment mode:</p>
         <label><input type="radio" name="mode" value="solo" checked onclick="togglePartnerFields()"> Solo Assessment</label><br><br>
         <label><input type="radio" name="mode" value="couple" onclick="togglePartnerFields()"> Couple (Compare Differences)</label>
         <div class="btn-container">
             <div></div>
-            <button class="btn-next" onclick="nextStep(2)">Begin Assessment →</button>
+            <button class="btn-next" onclick="nextStep(2)">Begin 15-Question Assessment →</button>
         </div>
     </div>
 
-    <div id="step
+    <div id="step2" class="step">
+        <h3>Pillar: Intimacy (Emotional Closeness)</h3>
+        <div class="question"><label>1. I feel that I really understand my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>2. I share extremely personal information with my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>3. I feel that I can really trust my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>4. I receive considerable emotional support from my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>5. I feel a sense of "oneness" with my partner.</label><div class="input-row">You: <input type="number" class="p1-int" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span></div></div>
+        <div class="btn-container"><button class="btn-prev" onclick="nextStep(1)">Back</button><button class="btn-next" onclick="nextStep(3)">Next: Passion →</button></div>
+    </div>
+
+    <div id="step3" class="step">
+        <h3>Pillar: Passion (Romance & Chemistry)</h3>
+        <div class="question"><label>6. My relationship is very romantic.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>7. I find my partner to be very personally attractive.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>8. I cannot imagine another person making me as happy.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>9. There is something almost magical about our relationship.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>10. I find myself thinking about my partner often during the day.</label><div class="input-row">You: <input type="number" class="p1-pas" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span></div></div>
+        <div class="btn-container"><button class="btn-prev" onclick="nextStep(2)">Back</button><button class="btn-next" onclick="nextStep(4)">Next: Commitment →</button></div>
+    </div>
+
+    <div id="step4" class="step">
+        <h3>Pillar: Commitment (Decision & Stability)</h3>
+        <div class="question"><label>11. I view my commitment to my partner as a solid one.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>12. I have confidence in the stability of my relationship.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>13. I expect my love for my partner to last for the rest of my life.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>14. I could not let anything get in the way of my commitment.</label><div class="input-row">You: <input type="number" class="p1-com" min="1" max="5" value="3"><span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span></div></div>
+        <div class="question"><label>15. I am certain of my love for my partner.</label><div class="input-row">You: <input type="number" class="p1-com"
