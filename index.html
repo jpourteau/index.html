@@ -3,89 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relationship Growth Tools</title>
+    <title>The F.R.P. Clinical Toolkit</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; line-height: 1.6; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; }
-        .section { margin-bottom: 40px; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
-        h2 { border-bottom: 2px solid #34495e; padding-bottom: 10px; color: #2c3e50; }
-        button { width: 100%; padding: 15px; background: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .result-box { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; }
-        input[type=range] { width: 100%; margin: 15px 0; }
-        #timerDisplay { font-size: 2em; font-weight: bold; color: #e74c3c; text-align: center; margin: 10px 0; display: none; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; color: #1a1a1a; line-height: 1.6; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #2c3e50; }
+        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #e1e8ed; border-radius: 12px; }
+        .question-group { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+        .question-text { font-weight: 500; display: block; margin-bottom: 8px; }
+        select { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+        button { width: 100%; padding: 16px; background: #2c3e50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1em; margin-top: 20px; }
+        .result-box { margin-top: 25px; padding: 25px; border-radius: 10px; display: none; border-left: 10px solid #ccc; }
+        .category-header { font-weight: bold; margin-top: 20px; text-transform: uppercase; font-size: 0.9em; letter-spacing: 1px; }
+        #timerDisplay { font-size: 2.5em; font-weight: bold; color: #e67e22; text-align: center; margin: 15px 0; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Relationship Toolkit</h1>
-
-    <div class="section" style="background: #fffcf5; border: 1px solid #f1c40f;">
+    <h1>The F.R.P. Toolkit</h1>
+    
+    <div class="section" style="background: #fffcf0; border: 1px solid #f1c40f;">
         <h2>The 60-Second Pause</h2>
-        <p>Before you act on an impulse to control, take a breath. Let the adrenaline fade.</p>
         <div id="timerDisplay">60</div>
-        <button onclick="startTimer()" style="background:#f39c12;">Start My Pause</button>
+        <button id="timerBtn" onclick="startTimer()" style="background:#f39c12;">Start De-escalation</button>
     </div>
 
     <div class="section">
-        <h2>The F.R.P. Assessment</h2>
-        <p>Identify your root of control: <strong>F</strong>ear, <strong>R</strong>igidity, or <strong>P</strong>ride.</p>
-        <label><strong>Fear Score (4-20):</strong> Anxiety about mistakes.</label>
-        <input type="range" id="f_val" min="4" max="20" value="10">
-        <label><strong>Rigidity Score (4-20):</strong> Need for rules.</label>
-        <input type="range" id="r_val" min="4" max="20" value="10">
-        <label><strong>Pride Score (4-20):</strong> Need to be "right."</label>
-        <input type="range" id="p_val" min="4" max="20" value="10">
-        <button onclick="runFRP()">Analyze Root</button>
-        <div id="frpRes" class="result-box"></div>
-    </div>
+        <h2>Control Driver Assessment</h2>
+        <p style="text-align:center; font-style:italic;">Rate each statement: 1 (Never) to 5 (Always)</p>
+        
+        <form id="quiz">
+            <div class="category-header" style="color:#e74c3c;">Section 1: Fear (The Shield)</div>
+            <div class="question-group">
+                <span class="question-text">I worry things will fall apart if I don't oversee them.</span>
+                <select class="f-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
+            <div class="question-group">
+                <span class="question-text">I feel panic when I don't know my partner's plans.</span>
+                <select class="f-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
 
-    <div class="section">
-        <h2>The Motive Switch</h2>
-        <p>Flip from "Avoidance" (Away) to "Approach" (Toward).</p>
-        <select id="motiveIn" style="width:100%; padding:10px; margin-bottom:10px;">
-            <option value="mad">I don't want them to be mad.</option>
-            <option value="fail">I'm afraid things will fail.</option>
-            <option value="reject">I don't want to feel rejected.</option>
-        </select>
-        <button onclick="runSwitch()" style="background:#27ae60;">Flip the Motive</button>
-        <div id="motiveRes" class="result-box" style="background:#f4f9f4; border-left:6px solid #27ae60;"></div>
+            <div class="category-header" style="color:#3498db;">Section 2: Rigidity (The Rules)</div>
+            <div class="question-group">
+                <span class="question-text">I have a "correct" way for every household task.</span>
+                <select class="r-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
+            <div class="question-group">
+                <span class="question-text">I get angry when plans change last minute.</span>
+                <select class="r-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
+
+            <div class="category-header" style="color:#27ae60;">Section 3: Pride (The Pedestal)</div>
+            <div class="question-group">
+                <span class="question-text">I believe I am more logical/capable than my partner.</span>
+                <select class="p-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
+            <div class="question-group">
+                <span class="question-text">I struggle to apologize even when I know I'm wrong.</span>
+                <select class="p-q"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            </div>
+
+            <button type="button" onclick="calculateFRP()">Analyze My Results</button>
+        </form>
+
+        <div id="results" class="result-box"></div>
     </div>
 </div>
 
 <script>
 function startTimer() {
-    let timeLeft = 60;
-    const display = document.getElementById('timerDisplay');
-    display.style.display = 'block';
-    const interval = setInterval(() => {
-        timeLeft--;
-        display.innerHTML = timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            display.innerHTML = "Breath Complete. Now choose equality.";
-        }
-    }, 1000);
+    let t = 60; const d = document.getElementById('timerDisplay'); d.style.display = 'block';
+    const i = setInterval(() => { t--; d.innerHTML = t; if(t<=0){ clearInterval(i); d.innerHTML="Pause Complete."; } }, 1000);
 }
 
-function runFRP() {
-    const f = parseInt(document.getElementById('f_val').value);
-    const r = parseInt(document.getElementById('r_val').value);
-    const p = parseInt(document.getElementById('p_val').value);
-    const res = document.getElementById('frpRes');
-    res.style.display = 'block';
-    res.style.background = '#f9f9f9';
-    let lead = (f >= r && f >= p) ? "FEAR (Anxiety)" : (r >= f && r >= p) ? "RIGIDITY (Rules)" : "PRIDE (Superiority)";
-    res.innerHTML = "<strong>Your Primary Root: " + lead + "</strong><br>The fence you've built is based on " + lead.toLowerCase() + ". Your goal is to Yield and Accept Influence today.";
-}
+function calculateFRP() {
+    let f=0, r=0, p=0;
+    document.querySelectorAll('.f-q').forEach(s => f += parseInt(s.value));
+    document.querySelectorAll('.r-q').forEach(s => r += parseInt(s.value));
+    document.querySelectorAll('.p-q').forEach(s => p += parseInt(s.value));
 
-function runSwitch() {
-    const val = document.getElementById('motiveIn').value;
-    const res = document.getElementById('motiveRes');
+    const res = document.getElementById('results');
     res.style.display = 'block';
-    let text = (val === 'mad') ? "Switch to: 'I value our peace.'" : (val === 'fail') ? "Switch to: 'I trust our growth.'" : "Switch to: 'I desire closeness.'";
-    res.innerHTML = "<strong>The Switch:</strong> " + text;
+
+    if (f >= r && f >= p) {
+        res.style.borderColor = "#e74c3c"; res.style.background = "#fff5f5";
+        res.innerHTML = "<h3>Lead Root: FEAR</h3><p>Your control is a shield. You are trying to prevent pain. <strong>Action:</strong> Name the catastrophe. Let your partner handle it anyway.</p>";
+    } else if (r >= f && r >= p) {
+        res.style.borderColor = "#3498db"; res.style.background = "#f0f7ff";
+        res.innerHTML = "<h3>Lead Root: RIGIDITY</h3><p>Your control is a blueprint. You value rules over people. <strong>Action:</strong> Practice the 'Gray Area.' Choose harmony over your method.</p>";
+    } else {
+        res.style.borderColor = "#27ae60"; res.style.background = "#f4fdf4";
+        res.innerHTML = "<h3>Lead Root: PRIDE</h3><p>Your control is a pedestal. You see yourself as 'above.' <strong>Action:</strong> Choose Equality. Ask for your partner's wisdom and yield.</p>";
+    }
 }
 </script>
 </body>
