@@ -1,0 +1,91 @@
+<div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 700px; margin: 20px auto; padding: 30px; border: 1px solid #ddd; border-radius: 15px; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; color: #2c3e50;">Couple's Love Triangle Comparison</h2>
+    <p style="text-align: center; color: #666; font-size: 0.9em;">Enter totals for both partners (Scale 5-25 per pillar)</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div style="padding: 15px; background: #ebf5fb; border-radius: 10px; border-top: 5px solid #3498db;">
+            <h4 style="color:#3498db; margin-top:0;">Male Partner</h4>
+            <label>Intimacy:</label> <input type="number" id="mI" min="5" max="25" value="15" style="width:50px;"><br><br>
+            <label>Passion:</label> <input type="number" id="mP" min="5" max="25" value="15" style="width:50px;"><br><br>
+            <label>Commitment:</label> <input type="number" id="mC" min="5" max="25" value="15" style="width:50px;">
+        </div>
+        <div style="padding: 15px; background: #fdedec; border-radius: 10px; border-top: 5px solid #e74c3c;">
+            <h4 style="color:#e74c3c; margin-top:0;">Female Partner</h4>
+            <label>Intimacy:</label> <input type="number" id="fI" min="5" max="25" value="15" style="width:50px;"><br><br>
+            <label>Passion:</label> <input type="number" id="fP" min="5" max="25" value="15" style="width:50px;"><br><br>
+            <label>Commitment:</label> <input type="number" id="fC" min="5" max="25" value="15" style="width:50px;">
+        </div>
+    </div>
+
+    <button type="button" onclick="compareTriangles()" style="background:#2c3e50; color:white; padding:15px; width:100%; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Compare & Find Gaps</button>
+
+    <div id="compareResult" style="margin-top: 30px; display:none;">
+        <h4 style="text-align:center;">Visual Comparison</h4>
+        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 150px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            <div style="display:flex; align-items:flex-end; gap:4px;">
+                <div id="barMI" style="width:25px; background:#3498db;"></div>
+                <div id="barFI" style="width:25px; background:#e74c3c;"></div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:4px;">
+                <div id="barMP" style="width:25px; background:#3498db;"></div>
+                <div id="barFP" style="width:25px; background:#e74c3c;"></div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:4px;">
+                <div id="barMC" style="width:25px; background:#3498db;"></div>
+                <div id="barFC" style="width:25px; background:#e74c3c;"></div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: space-around; font-size: 0.75em; margin-top: 5px; color:#666;">
+            <span>INTIMACY</span><span>PASSION</span><span>COMMITMENT</span>
+        </div>
+
+        <div id="gapAnalysis" style="margin-top:25px; padding:15px; border-radius:8px; background:#f9f9f9; border-left: 5px solid #2c3e50;"></div>
+    </div>
+</div>
+
+<script>
+function compareTriangles() {
+    const mi = parseInt(document.getElementById('mI').value);
+    const mp = parseInt(document.getElementById('mP').value);
+    const mc = parseInt(document.getElementById('mC').value);
+    const fi = parseInt(document.getElementById('fI').value);
+    const fp = parseInt(document.getElementById('fP').value);
+    const fc = parseInt(document.getElementById('fC').value);
+
+    document.getElementById('compareResult').style.display = 'block';
+    
+    // Scale bars (multiplier 5 to fit 150px height)
+    document.getElementById('barMI').style.height = (mi * 5) + 'px';
+    document.getElementById('barFI').style.height = (fi * 5) + 'px';
+    document.getElementById('barMP').style.height = (mp * 5) + 'px';
+    document.getElementById('barFP').style.height = (fp * 5) + 'px';
+    document.getElementById('barMC').style.height = (mc * 5) + 'px';
+    document.getElementById('barFC').style.height = (fc * 5) + 'px';
+
+    // Gap Analysis
+    const gapI = Math.abs(mi - fi);
+    const gapP = Math.abs(mp - fp);
+    const gapC = Math.abs(mc - fc);
+    
+    let largestGap = "";
+    let gapVal = 0;
+
+    if (gapI >= gapP && gapI >= gapC) { largestGap = "Intimacy"; gapVal = gapI; }
+    else if (gapP >= gapI && gapP >= gapC) { largestGap = "Passion"; gapVal = gapP; }
+    else { largestGap = "Commitment"; gapVal = gapC; }
+
+    const gapBox = document.getElementById('gapAnalysis');
+    let gapText = "<strong>Greatest Gap: " + largestGap + " (" + gapVal + " points)</strong><br>";
+    
+    if (gapVal > 5) {
+        gapText += "This significant gap suggests a misalignment in how you experience " + largestGap.toLowerCase() + ". One partner feels much more satisfied or invested in this area than the other.";
+    } else {
+        gapText += "Your scores are relatively well-aligned. You are viewing the relationship through a similar lens.";
+    }
+    
+    gapBox.innerHTML = gapText;
+}
+</script>
+
+
+
