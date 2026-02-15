@@ -7,27 +7,19 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
         .container { max-width: 650px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-        
-        /* Instructions Styling */
         .instructions { background: #e8f4fd; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #3498db; font-size: 0.95em; }
-        
-        /* Progress Bar */
         .progress-container { width: 100%; background: #eee; height: 8px; border-radius: 4px; margin-bottom: 30px; }
         .progress-bar { width: 33%; height: 100%; background: #3498db; border-radius: 4px; transition: 0.3s; }
-
         .step { display: none; }
         .step.active { display: block; }
-
         .question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
         .input-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
         input[type="number"] { width: 60px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-        
         .btn-container { display: flex; justify-content: space-between; margin-top: 30px; }
         button { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .btn-next { background: #3498db; color: white; }
         .btn-prev { background: #95a5a6; color: white; }
         .btn-finish { background: #27ae60; color: white; }
-        
         #results { display: none; padding: 25px; background: #f9f9f9; border-radius: 10px; margin-top: 20px; }
     </style>
 </head>
@@ -39,18 +31,18 @@
 
     <div class="instructions">
         <strong>How to complete this:</strong><br>
-        1. Choose if you are testing alone or comparing with a partner.<br>
-        2. Rate each statement from <strong>1 (Never/Dislike)</strong> to <strong>5 (Always/Strongly)</strong>.<br>
-        3. Click "Next" at the bottom of each section to proceed.
+        1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.<br>
+        2. If you are with a partner, select "Couple" below to see both input boxes.<br>
+        3. Click "Next" to move through the pillars.
     </div>
 
     <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
 
     <div class="step active" id="step1">
-        <h3>Step 1: Choose Assessment Mode</h3>
-        <p>Would you like to take this solo, or enter scores for both partners to compare?</p>
-        <label><input type="radio" name="mode" value="solo" checked onclick="togglePartnerFields()"> Solo</label><br><br>
-        <label><input type="radio" name="mode" value="couple" onclick="togglePartnerFields()"> Couple (Comparison)</label>
+        <h3>Step 1: Assessment Mode</h3>
+        <p>This defaults to Solo. Switch to Couple if you want to compare scores.</p>
+        <label><input type="radio" name="mode" value="solo" checked onclick="togglePartnerFields()"> Solo Assessment</label><br><br>
+        <label><input type="radio" name="mode" value="couple" onclick="togglePartnerFields()"> Couple (Compare Partner Scores)</label>
         <div class="btn-container">
             <div></div>
             <button class="btn-next" onclick="nextStep(2)">Begin Assessment →</button>
@@ -58,11 +50,4 @@
     </div>
 
     <div class="step" id="step2">
-        <h3>Pillar 1: Intimacy</h3>
-        <p><em>Focus on emotional closeness and sharing.</em></p>
-        <div class="question">
-            <label>1. We share our deepest personal thoughts and feelings with one another.</label>
-            <div class="input-row">
-                <span>You: <input type="number" class="p1-score" min="1" max="5" value="3"></span>
-                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-score" min="1" max="5" value="3"></span>
-            </div>
+        <h3>Pillar 1:
