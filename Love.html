@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@
         .btn-prev { background: #95a5a6; color: white; }
         .btn-finish { background: #27ae60; color: white; }
         #results { display: none; padding: 25px; background: #fdfdfd; border: 2px solid #eee; border-radius: 10px; margin-top: 20px; }
-        .pillar-result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .pillar-result { margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #e74c3c; }
     </style>
 </head>
 <body>
@@ -31,8 +31,8 @@
     <h1>Love Triangle Assessment</h1>
 
     <div class="instructions">
-        <strong>Scale:</strong> 1 = Not at all, 3 = Moderately, 5 = Completely. <br>
-        This test measures the three components of love. If you are with a partner, select "Couple" to compare views.
+        <strong>Scale:</strong> 1 = Never, 3 = Sometimes, 5 = Always. <br>
+        This assessment evaluates the three components of love. High scores in all areas indicate a balanced relationship.
     </div>
 
     <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
@@ -57,6 +57,20 @@
                 <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span>
             </div>
         </div>
+        <div class="question">
+            <label>2. I receive considerable emotional support from my partner.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-int" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span>
+            </div>
+        </div>
+        <div class="question">
+            <label>3. I feel that I can really trust my partner.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-int" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-int" min="1" max="5" value="3"></span>
+            </div>
+        </div>
         <div class="btn-container">
             <button class="btn-prev" onclick="nextStep(1)">Back</button>
             <button class="btn-next" onclick="nextStep(3)">Next: Passion →</button>
@@ -66,7 +80,21 @@
     <div class="step" id="step3">
         <h3>Pillar 2: Passion (Chemistry)</h3>
         <div class="question">
-            <label>2. My relationship is very romantic.</label>
+            <label>4. I find my partner to be very personally attractive.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-pas" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span>
+            </div>
+        </div>
+        <div class="question">
+            <label>5. I cannot imagine another person making me as happy as my partner does.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-pas" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span>
+            </div>
+        </div>
+        <div class="question">
+            <label>6. There is something almost magical about our relationship.</label>
             <div class="input-row">
                 <span>You: <input type="number" class="p1-pas" min="1" max="5" value="3"></span>
                 <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-pas" min="1" max="5" value="3"></span>
@@ -81,7 +109,21 @@
     <div class="step" id="step4">
         <h3>Pillar 3: Commitment (Decision)</h3>
         <div class="question">
-            <label>3. I view my commitment to my partner as a solid one.</label>
+            <label>7. I have confidence in the stability of my relationship.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-com" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span>
+            </div>
+        </div>
+        <div class="question">
+            <label>8. I view my commitment to my partner as a solid one.</label>
+            <div class="input-row">
+                <span>You: <input type="number" class="p1-com" min="1" max="5" value="3"></span>
+                <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span>
+            </div>
+        </div>
+        <div class="question">
+            <label>9. I expect my love for my partner to last for the rest of my life.</label>
             <div class="input-row">
                 <span>You: <input type="number" class="p1-com" min="1" max="5" value="3"></span>
                 <span class="partner-input" style="display:none;">Partner: <input type="number" class="p2-com" min="1" max="5" value="3"></span>
@@ -106,37 +148,39 @@
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById('step' + stepNum).classList.add('active');
         document.getElementById('progress').style.width = (stepNum / 4 * 100) + '%';
+        window.scrollTo(0, 0);
     }
 
     function showResults() {
         const isCouple = document.querySelector('input[name="mode"]:checked').value === 'couple';
         
-        // Get scores
-        const p1Int = parseInt(document.querySelector('.p1-int').value);
-        const p1Pas = parseInt(document.querySelector('.p1-pas').value);
-        const p1Com = parseInt(document.querySelector('.p1-com').value);
-
-        let resultHTML = `<h2>Evaluation Results</h2>`;
+        const sum = (selector) => Array.from(document.querySelectorAll(selector)).reduce((a, b) => a + parseInt(b.value), 0);
         
-        // Logic for Solo Analysis
-        let type = "";
-        if (p1Int >= 4 && p1Pas >= 4 && p1Com >= 4) type = "Consummate Love (Strong balance of all three)";
-        else if (p1Int >= 4 && p1Pas >= 4) type = "Romantic Love (Deep bond and passion)";
-        else if (p1Int >= 4 && p1Com >= 4) type = "Companionate Love (Strong friendship and commitment)";
-        else type = "Developing Love (One or more areas need focus)";
+        const p1Int = sum('.p1-int'); const p1Pas = sum('.p1-pas'); const p1Com = sum('.p1-com');
 
-        resultHTML += `<div class="pillar-result"><strong>Your Primary Style:</strong> ${type}</div>`;
+        let resultHTML = `<h2>Your Love Profile</h2>`;
+        
+        // Threshold for "High" is 11 out of 15 per pillar
+        const high = 11;
+        let style = "";
+        if (p1Int >= high && p1Pas >= high && p1Com >= high) style = "Consummate Love (The Ideal Balance)";
+        else if (p1Int >= high && p1Pas >= high) style = "Romantic Love (Deep Bond + Passion)";
+        else if (p1Int >= high && p1Com >= high) style = "Companionate Love (Friendship + Commitment)";
+        else if (p1Pas >= high && p1Com >= high) style = "Fatuous Love (Passion + Commitment without deep intimacy)";
+        else if (p1Int >= high) style = "Liking (Mainly Intimacy/Friendship)";
+        else if (p1Pas >= high) style = "Infatuation (Mainly Passion)";
+        else if (p1Com >= high) style = "Empty Love (Mainly Commitment)";
+        else style = "Casual/Developing Love";
+
+        resultHTML += `<div class="pillar-result"><strong>Your Primary Love Type:</strong><br>${style}</div>`;
         
         if (isCouple) {
-            const p2Int = parseInt(document.querySelector('.p2-int').value);
-            const p2Pas = parseInt(document.querySelector('.p2-pas').value);
-            const p2Com = parseInt(document.querySelector('.p2-com').value);
+            const p2Int = sum('.p2-int'); const p2Pas = sum('.p2-pas'); const p2Com = sum('.p2-com');
+            const totalGap = Math.abs(p1Int-p2Int) + Math.abs(p1Pas-p2Pas) + Math.abs(p1Com-p2Com);
             
-            const gap = Math.abs(p1Int-p2Int) + Math.abs(p1Pas-p2Pas) + Math.abs(p1Com-p2Com);
-            
-            resultHTML += `<h3>Couple's Alignment</h3>`;
-            resultHTML += `<p><strong>Alignment Score:</strong> ${gap} (Lower is better)</p>`;
-            resultHTML += gap <= 2 ? "<p>✅ You are remarkably in sync.</p>" : "<p>⚠️ You perceive the relationship differently. Use the scores above to start a conversation.</p>";
+            resultHTML += `<h3>Couple's Comparison</h3>`;
+            resultHTML += `<p>An Alignment Gap of <strong>${totalGap}</strong> suggests how similarly you both view the relationship.</p>`;
+            resultHTML += totalGap <= 6 ? "<p>✅ <strong>High Alignment:</strong> You are seeing the relationship very similarly.</p>" : "<p>⚠️ <strong>Perspective Gap:</strong> You have different views on the relationship's current state. This is a great opportunity to discuss which pillars feel different to each of you.</p>";
         }
 
         document.getElementById('results').innerHTML = resultHTML;
