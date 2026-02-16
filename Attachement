@@ -1,1 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Attachment Styles Self-Assessment</title>
+	<!-- Bootstrap CSS for responsiveness -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<style>
+    	body { padding: 20px; background-color: #f8f9fa; }
+    	.container { max-width: 900px; margin: auto; }
+    	.quiz-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    	.result { display: none; margin-top: 20px; padding: 15px; border-radius: 8px; background-color: #e9ecef; border: 1px solid #ced4da; }
+    	.subscale { margin-bottom: 15px; }
+    	.dominant { font-weight: bold; color: #0d6efd; }
+	</style>
+</head>
+<body>
+	<div class="container">
+    	<h1 class="text-center mb-4">Attachment Styles Self-Assessment</h1>
+    	<p class="text-center mb-5">This quiz helps you reflect on your attachment style in adult relationships. Rate each statement based on how well it describes your typical feelings and behaviors in close relationships: 1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree. This is not a diagnostic tool—use for self-reflection and discussion.</p>
+       
+    	<div class="quiz-section">
+        	<form id="attachmentForm">
+            	<!-- Secure Subscale -->
+            	<h5>Secure Attachment Statements:</h5>
+            	<div class="mb-3">
+                	<label>1. I feel comfortable depending on my partner and having them depend on me.</label>
+                	<select class="form-select" name="q1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>2. I trust that my partner will be there for me when I need them.</label>
+                	<select class="form-select" name="q2"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>3. I'm okay with being close to others and don't worry much about being abandoned or too dependent.</label>
+                	<select class="form-select" name="q3"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>4. In relationships, I can express my needs openly without fear of rejection.</label>
+                	<select class="form-select" name="q4"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>5. I handle conflicts by talking things through calmly and seeking mutual understanding.</label>
+                	<select class="form-select" name="q5"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+ 
+            	<!-- Anxious Subscale -->
+            	<h5>Anxious Attachment Statements:</h5>
+            	<div class="mb-3">
+                	<label>6. I often worry that my partner doesn't really love me or might leave me.</label>
+                	<select class="form-select" name="q6"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>7. I need a lot of reassurance from my partner to feel secure in the relationship.</label>
+                	<select class="form-select" name="q7"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>8. When my partner is distant, I feel anxious and try to pull them closer.</label>
+                	<select class="form-select" name="q8"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>9. I sometimes feel overwhelmed by fears of not being good enough for my partner.</label>
+                	<select class="form-select" name="q9"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>10. In relationships, I crave intimacy but fear it won't last.</label>
+                	<select class="form-select" name="q10"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+ 
+            	<!-- Dismissive-Avoidant Subscale -->
+            	<h5>Dismissive-Avoidant Attachment Statements:</h5>
+            	<div class="mb-3">
+                	<label>11. I prefer to keep things independent and not get too emotionally involved.</label>
+                	<select class="form-select" name="q11"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>12. I find it hard to rely on others and prefer handling things on my own.</label>
+                	<select class="form-select" name="q12"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>13. Emotional closeness makes me uncomfortable, so I keep some distance.</label>
+                	<select class="form-select" name="q13"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>14. I downplay the importance of relationships and focus more on self-reliance.</label>
+                	<select class="form-select" name="q14"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>15. When conflicts arise, I tend to withdraw or dismiss my partner's concerns.</label>
+                	<select class="form-select" name="q15"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+ 
+            	<!-- Fearful-Avoidant Subscale -->
+            	<h5>Fearful-Avoidant (Disorganized) Attachment Statements:</h5>
+            	<div class="mb-3">
+                	<label>16. I want close relationships but fear getting hurt, so I push people away.</label>
+                	<select class="form-select" name="q16"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>17. My relationships often feel chaotic—I crave connection but then feel trapped.</label>
+                	<select class="form-select" name="q17"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>18. I have a hard time trusting others due to past betrayals or hurts.</label>
+                	<select class="form-select" name="q18"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>19. I swing between needing my partner desperately and wanting to escape the relationship.</label>
+                	<select class="form-select" name="q19"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+            	<div class="mb-3">
+                	<label>20. Conflicts trigger strong emotions in me, making me feel confused or overwhelmed.</label>
+                	<select class="form-select" name="q20"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+            	</div>
+               
+            	<button type="button" class="btn btn-primary w-100" onclick="calculateAttachmentScores()">Calculate Scores</button>
+        	</form>
+        	<div id="attachmentResult" class="result">
+            	<h5>Your Attachment Style Scores:</h5>
+            	<div class="subscale">Secure: <span id="secureScore"></span> / 25</div>
+            	<div class="subscale">Anxious: <span id="anxiousScore"></span> / 25</div>
+            	<div class="subscale">Dismissive-Avoidant: <span id="dismissiveScore"></span> / 25</div>
+            	<div class="subscale">Fearful-Avoidant: <span id="fearfulScore"></span> / 25</div>
+            	<h5 class="mt-3">Interpretation:</h5>
+            	<p id="attachmentInterp"></p>
+            	<button type="button" class="btn btn-secondary w-100 mb-2" onclick="downloadResults()">Download Results (TXT)</button>
+            	<button type="button" class="btn btn-info w-100" onclick="emailResults()">Email Results</button>
+        	</div>
+    	</div>
+	</div>
+ 
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script>
+    	let secure = 0, anxious = 0, dismissive = 0, fearful = 0;
+    	let interpText = '';
+ 
+    	function calculateAttachmentScores() {
+        	const form = document.getElementById('attachmentForm');
+        	secure = 0; anxious = 0; dismissive = 0; fearful = 0;
+           
+        	// Secure (q1-5)
+        	for (let i = 1; i <= 5; i++) {
+            	secure += parseInt(form.elements['q' + i].value);
+        	}
+        	// Anxious (q6-10)
+        	for (let i = 6; i <= 10; i++) {
+            	anxious += parseInt(form.elements['q' + i].value);
+        	}
+        	// Dismissive (q11-15)
+        	for (let i = 11; i <= 15; i++) {
+            	dismissive += parseInt(form.elements['q' + i].value);
+        	}
+        	// Fearful (q16-20)
+        	for (let i = 16; i <= 20; i++) {
+            	fearful += parseInt(form.elements['q' + i].value);
+        	}
+           
+        	document.getElementById('secureScore').textContent = secure;
+        	document.getElementById('anxiousScore').textContent = anxious;
+        	document.getElementById('dismissiveScore').textContent = dismissive;
+        	document.getElementById('fearfulScore').textContent = fearful;
+           
+        	// Find dominant style(s)
+        	const scores = [
+            	{ name: 'Secure', score: secure, interp: 'You likely have a secure attachment style. You\'re comfortable with intimacy and independence, forming healthy, trusting bonds. This promotes resilience in relationships. Build on this by supporting partners who may have insecure styles.' },
+            	{ name: 'Anxious', score: anxious, interp: 'You may lean toward an anxious attachment style, seeking closeness but fearing rejection. This can lead to heightened sensitivity to partners\' cues. Antidote: Practice self-soothing and open communication about needs; therapy like CBT can help reframe fears.' },
+            	{ name: 'Dismissive-Avoidant', score: dismissive, interp: 'This suggests a dismissive-avoidant style, valuing autonomy over connection. You might avoid vulnerability to protect yourself. Antidote: Gradually practice emotional sharing; mindfulness can help recognize avoidance patterns.' },
+            	{ name: 'Fearful-Avoidant', score: fearful, interp: 'Indicative of a fearful-avoidant (disorganized) style, often linked to trauma. You desire closeness but fear it, leading to turbulent relationships. Antidote: Seek trauma-informed therapy (e.g., EMDR or attachment-based approaches) to build safety and trust.' }
+        	];
+           
+        	const maxScore = Math.max(secure, anxious, dismissive, fearful);
+        	const dominantStyles = scores.filter(s => s.score === maxScore && s.score >= 15);
+        	interpText = '';
+           
+        	if (dominantStyles.length > 1) {
+            	interpText = 'You have mixed attachment styles with high scores in: ' + dominantStyles.map(s => s.name).join(' and ') + '. Overlaps are common—reflect on contexts where these patterns differ. ';
+            	dominantStyles.forEach(s => {
+                	interpText += '<br><span class="dominant">' + s.name + ':</span> ' + s.interp;
+            	});
+        	} else if (dominantStyles.length === 1) {
+            	const s = dominantStyles[0];
+            	interpText = '<span class="dominant">' + s.name + ' (Highest Score):</span> ' + s.interp;
+        	} else {
+            	interpText = 'No dominant style above 15—your attachment may be balanced or situational. Review all scores for insights.';
+        	}
+           
+        	if (secure + anxious + dismissive + fearful > 60) {
+            	interpText += '<br><br>Overall high scores suggest general attachment insecurity worth exploring in therapy.';
+        	}
+           
+        	document.getElementById('attachmentInterp').innerHTML = interpText;
+        	document.getElementById('attachmentResult').style.display = 'block';
+    	}
+ 
+    	function downloadResults() {
+        	const content = `Attachment Styles Self-Assessment Results\n\nScores:\nSecure: ${secure}/25\nAnxious: ${anxious}/25\nDismissive-Avoidant: ${dismissive}/25\nFearful-Avoidant: ${fearful}/25\n\nInterpretation:\n${document.getElementById('attachmentInterp').textContent}`;
+        	const blob = new Blob([content], { type: 'text/plain' });
+        	const url = URL.createObjectURL(blob);
+        	const a = document.createElement('a');
+        	a.href = url;
+        	a.download = 'attachment_styles_results.txt';
+        	a.click();
+        	URL.revokeObjectURL(url);
+    	}
+ 
+    	function emailResults() {
+        	const subject = 'Attachment Styles Quiz Results';
+        	const body = `Scores:\nSecure: ${secure}/25\nAnxious: ${anxious}/25\nDismissive-Avoidant: ${dismissive}/25\nFearful-Avoidant: ${fearful}/25\n\nInterpretation:\n${document.getElementById('attachmentInterp').textContent}`;
+        	window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    	}
+	</script>
+</body>
+</html>
 
