@@ -26,156 +26,152 @@
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div style="margin-bottom: 15px;"><a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a></div>
-    
-    <div id="step-0" class="step active">
-        <h1>Love Triangle Assessment</h1>
-        <div class="instructions-box">
-            <h3>How to take the assessment:</h3>
-            <p>1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.</p>
-            <p>2. In Couple Mode, take turns privately. Partner A completes the test, then hands the device to Partner B.</p>
-            <p>3. Your results will be plotted 0-10 from the <strong>center of the baseline</strong>.</p>
+    <div class="container">
+        <div style="margin-bottom: 15px;"><a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a></div>
+        
+        <div id="step-0" class="step active">
+            <h1>Love Triangle Assessment</h1>
+            <div class="instructions-box">
+                <h3>How to take the assessment:</h3>
+                <p>1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.</p>
+                <p>2. In Couple Mode, take turns privately. Partner A completes the test, then hands the device to Partner B.</p>
+                <p>3. Your results will be plotted 0-10 from the <strong>center of the baseline</strong>.</p>
+            </div>
+            <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
         </div>
-        <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
-    </div>
 
-    <div id="step-1" class="step">
-        <h2 id="user-title">Partner A's Turn</h2>
-        <div id="questions-wrapper"></div>
-        <div class="btn-container">
-            <button class="btn-grey" id="backBtn" onclick="prevPage()" style="display:none;">Back</button>
-            <button class="btn-red" id="nextBtn" onclick="nextPage()">Next Page</button>
+        <div id="step-1" class="step">
+            <h2 id="user-title">Partner A's Turn</h2>
+            <div id="questions-wrapper"></div>
+            <div class="btn-container">
+                <button class="btn-grey" id="backBtn" onclick="prevPage()" style="display:none;">Back</button>
+                <button class="btn-red" id="nextBtn" onclick="nextPage()">Next Page</button>
+            </div>
+        </div>
+
+        <div id="step-2" class="step" style="text-align: center;">
+            <h2>Turn Complete</h2>
+            <p>Please hand the device to <strong>Partner B</strong>.</p>
+            <button class="btn-blue" onclick="startPartnerB()">Start Partner B Turn</button>
+        </div>
+
+        <div id="step-3" class="step">
+            <h2>Your Relationship Map</h2>
+            <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
+            <div id="analysisText" class="analysis-box"></div>
+            <button class="btn-grey" onclick="location.reload()" style="margin-top:20px; width:100%;">Restart Assessment</button>
         </div>
     </div>
 
-    <div id="step-2" class="step" style="text-align: center;">
-        <h2>Turn Complete</h2>
-        <p>Please hand the device to <strong>Partner B</strong>.</p>
-        <button class="btn-blue" onclick="startPartnerB()">Start Partner B Turn</button>
-    </div>
+    <script>
+        let pA_Raw = { int: 0, pas: 0, com: 0 };
+        let pB_Raw = { int: 0, pas: 0, com: 0 };
+        let curPage = 0;
+        let curTurn = 'A';
 
-    <div id="step-3" class="step">
-        <h2>Your Relationship Map</h2>
-        <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
-        <div id="analysisText" class="analysis-box"></div>
-        <button class="btn-grey" onclick="location.reload()" style="margin-top:20px; width:100%;">Restart Assessment</button>
-    </div>
-</div>
-
-<script>
-    let pA_Raw = { int: 0, pas: 0, com: 0 };
-    let pB_Raw = { int: 0, pas: 0, com: 0 };
-    let curPage = 0;
-    let curTurn = 'A';
-
-    const questions = [
-        { t: "I have a warm relationship with my partner.", c: "int" },
-        { t: "I receive considerable emotional support.", c: "int" },
-        { t: "I value my partner greatly in my life.", c: "int" },
-        { t: "I feel my partner really understands me.", c: "int" },
-        { t: "I feel I can really trust my partner.", c: "int" },
-        { t: "Our relationship is very romantic.", c: "pas" },
-        { t: "I find my partner very attractive.", c: "pas" },
-        { t: "I can't imagine anyone else making me happy.", c: "pas" },
-        { t: "I think about my partner often.", c: "pas" },
-        { t: "There is something 'magical' about us.", c: "pas" },
-        { t: "My commitment is solid.", c: "com" },
-        { t: "I have confidence in our stability.", c: "com" },
-        { t: "I expect our love to last forever.", c: "com" },
-        { t: "I view our relationship as permanent.", c: "com" },
-        { t: "I feel responsibility toward my partner.", c: "com" }
-    ];
-
-    function goToStep(idx) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step-' + idx).classList.add('active');
-        if(idx === 1) renderPage();
-        window.scrollTo(0,0);
-    }
-
-    function renderPage() {
-        const wrapper = document.getElementById('questions-wrapper');
-        wrapper.innerHTML = '';
-        const start = curPage * 5;
-        questions.slice(start, start + 5).forEach((q, i) => {
-            wrapper.innerHTML += `
-                <div class="question">
-                    <label>${start+i+1}. ${q.t}</label>
-                    <div class="input-row">Score: 
-                        <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}">
-                    </div>
-                </div>`;
-        });
-        document.getElementById('backBtn').style.display = curPage === 0 ? 'none' : 'block';
-        document.getElementById('nextBtn').innerText = curPage === 2 ? 'Submit' : 'Next Page';
-    }
-
-    function nextPage() {
-        if (curPage < 2) { curPage++; renderPage(); } 
-        else { saveData(); }
-    }
-
-    function prevPage() {
-        if (curPage > 0) { curPage--; renderPage(); }
-    }
-
-    function saveData() {
-        let s = { int: 0, pas: 0, com: 0 };
-        document.querySelectorAll('.score-input').forEach(i => {
-            s[i.dataset.cat] += parseInt(i.value) || 0;
-        });
-        if (curTurn === 'A') { pA_Raw = s; goToStep(2); } 
-        else { pB_Raw = s; finalize(); }
-    }
-
-    function startPartnerB() {
-        curTurn = 'B'; curPage = 0;
-        document.getElementById('user-title').innerText = "Partner B's Turn";
-        goToStep(1);
-    }
-
-    function finalize() {
-        goToStep(3);
-        const toTen = (v) => (((v - 5) / 20) * 10).toFixed(1);
-        const getPts = (d) => [
-            { x: -parseFloat(toTen(d.pas)), y: 0 },
-            { x: 0, y: parseFloat(toTen(d.int)) },
-            { x: parseFloat(toTen(d.com)), y: 0 },
-            { x: -parseFloat(toTen(d.pas)), y: 0 } 
+        const questions = [
+            { t: "I have a warm relationship with my partner.", c: "int" },
+            { t: "I receive considerable emotional support.", c: "int" },
+            { t: "I value my partner greatly in my life.", c: "int" },
+            { t: "I feel my partner really understands me.", c: "int" },
+            { t: "I feel I can really trust my partner.", c: "int" },
+            { t: "Our relationship is very romantic.", c: "pas" },
+            { t: "I find my partner very attractive.", c: "pas" },
+            { t: "I can't imagine anyone else making me happy.", c: "pas" },
+            { t: "I think about my partner often.", c: "pas" },
+            { t: "There is something 'magical' about us.", c: "pas" },
+            { t: "My commitment is solid.", c: "com" },
+            { t: "I have confidence in our stability.", c: "com" },
+            { t: "I expect our love to last forever.", c: "com" },
+            { t: "I view our relationship as permanent.", c: "com" },
+            { t: "I feel responsibility toward my partner.", c: "com" }
         ];
 
-        new Chart(document.getElementById('loveTriangleChart'), {
-            type: 'scatter',
-            data: {
-                datasets: [
-                    { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.3)', borderWidth: 3, fill: true },
-                    { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.3)', borderWidth: 3, fill: true }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' } },
-                    y: { min: 0, max: 10, title: { display: true, text: 'Intimacy' } }
-                }
-            }
-        });
+        function goToStep(idx) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + idx).classList.add('active');
+            if(idx === 1) renderPage();
+            window.scrollTo(0,0);
+        }
 
-        // Summary Table
-        const sA = { i: toTen(pA_Raw.int), c: toTen(pA_Raw.com), p: toTen(pA_Raw.pas) };
-        const sB = { i: toTen(pB_Raw.int), c: toTen(pB_Raw.com), p: toTen(pB_Raw.pas) };
-        document.getElementById('analysisText').innerHTML = `
-            <h3>Numerical Results (0-10 Scale)</h3>
-            <table>
-                <tr><th>Area</th><th>Partner A</th><th>Partner B</th><th>Gap</th></tr>
-                <tr><td>Intimacy</td><td>${sA.i}</td><td>${sB.i}</td><td>${Math.abs(sA.i - sB.i).toFixed(1)}</td></tr>
-                <tr><td>Passion</td><td>${sA.p}</td><td>${sB.p}</td><td>${Math.abs(sA.p - sB.p).toFixed(1)}</td></tr>
-                <tr><td>Commitment</td><td>${sA.c}</td><td>${sB.c}</td><td>${Math.abs(sA.c - sB.c).toFixed(1)}</td></tr>
-            </table>`;
-    }
-</script>
+        function renderPage() {
+            const wrapper = document.getElementById('questions-wrapper');
+            wrapper.innerHTML = '';
+            const start = curPage * 5;
+            questions.slice(start, start + 5).forEach((q, i) => {
+                wrapper.innerHTML += `
+                    <div class="question">
+                        <label>${start+i+1}. ${q.t}</label>
+                        <div class="input-row">Score: <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"> </div>
+                    </div>`;
+            });
+            document.getElementById('backBtn').style.display = curPage === 0 ? 'none' : 'block';
+            document.getElementById('nextBtn').innerText = curPage === 2 ? 'Submit' : 'Next Page';
+        }
+
+        function nextPage() {
+            if (curPage < 2) { curPage++; renderPage(); } 
+            else { saveData(); }
+        }
+
+        function prevPage() {
+            if (curPage > 0) { curPage--; renderPage(); }
+        }
+
+        function saveData() {
+            let s = { int: 0, pas: 0, com: 0 };
+            document.querySelectorAll('.score-input').forEach(i => {
+                s[i.dataset.cat] += parseInt(i.value) || 0;
+            });
+            if (curTurn === 'A') { pA_Raw = s; goToStep(2); } 
+            else { pB_Raw = s; finalize(); }
+        }
+
+        function startPartnerB() {
+            curTurn = 'B'; curPage = 0;
+            document.getElementById('user-title').innerText = "Partner B's Turn";
+            goToStep(1);
+        }
+
+        function finalize() {
+            goToStep(3);
+            const toTen = (v) => (((v - 5) / 20) * 10).toFixed(1);
+            const getPts = (d) => [
+                { x: -parseFloat(toTen(d.pas)), y: 0 },
+                { x: 0, y: parseFloat(toTen(d.int)) },
+                { x: parseFloat(toTen(d.com)), y: 0 },
+                { x: -parseFloat(toTen(d.pas)), y: 0 } 
+            ];
+
+            new Chart(document.getElementById('loveTriangleChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.3)', borderWidth: 3, fill: true },
+                        { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.3)', borderWidth: 3, fill: true }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' } },
+                        y: { min: 0, max: 10, title: { display: true, text: 'Intimacy' } }
+                    }
+                }
+            });
+
+            const sA = { i: toTen(pA_Raw.int), c: toTen(pA_Raw.com), p: toTen(pA_Raw.pas) };
+            const sB = { i: toTen(pB_Raw.int), c: toTen(pB_Raw.com), p: toTen(pB_Raw.pas) };
+            document.getElementById('analysisText').innerHTML = `
+                <h3>Numerical Results (0-10 Scale)</h3>
+                <table>
+                    <tr><th>Area</th><th>Partner A</th><th>Partner B</th><th>Gap</th></tr>
+                    <tr><td>Intimacy</td><td>${sA.i}</td><td>${sB.i}</td><td>${Math.abs(sA.i - sB.i).toFixed(1)}</td></tr>
+                    <tr><td>Passion</td><td>${sA.p}</td><td>${sB.p}</td><td>${Math.abs(sA.p - sB.p).toFixed(1)}</td></tr>
+                    <tr><td>Commitment</td><td>${sA.c}</td><td>${sB.c}</td><td>${Math.abs(sA.c - sB.c).toFixed(1)}</td></tr>
+                </table>`;
+        }
+    </script>
 </body>
 </html>
