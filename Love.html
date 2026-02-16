@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sternberg Love Triangle Assessment</title>
+    <title>Sternberg Love Triangle</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
@@ -32,10 +32,9 @@
         <div id="step-0" class="step active">
             <h1>Love Triangle Assessment</h1>
             <div class="instructions-box">
-                <h3>How to take the assessment:</h3>
+                <h3>Instructions:</h3>
                 <p>1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.</p>
-                <p>2. In Couple Mode, take turns privately. Partner A completes the test, then hands the device to Partner B.</p>
-                <p>3. Your results will be plotted 0-10 from the <strong>center of the baseline</strong>.</p>
+                <p>2. Partners take turns privately. Results are mapped 0-10 from the center.</p>
             </div>
             <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
         </div>
@@ -132,46 +131,3 @@
             document.getElementById('user-title').innerText = "Partner B's Turn";
             goToStep(1);
         }
-
-        function finalize() {
-            goToStep(3);
-            const toTen = (v) => (((v - 5) / 20) * 10).toFixed(1);
-            const getPts = (d) => [
-                { x: -parseFloat(toTen(d.pas)), y: 0 },
-                { x: 0, y: parseFloat(toTen(d.int)) },
-                { x: parseFloat(toTen(d.com)), y: 0 },
-                { x: -parseFloat(toTen(d.pas)), y: 0 } 
-            ];
-
-            new Chart(document.getElementById('loveTriangleChart'), {
-                type: 'scatter',
-                data: {
-                    datasets: [
-                        { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.3)', borderWidth: 3, fill: true },
-                        { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.3)', borderWidth: 3, fill: true }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' } },
-                        y: { min: 0, max: 10, title: { display: true, text: 'Intimacy' } }
-                    }
-                }
-            });
-
-            const sA = { i: toTen(pA_Raw.int), c: toTen(pA_Raw.com), p: toTen(pA_Raw.pas) };
-            const sB = { i: toTen(pB_Raw.int), c: toTen(pB_Raw.com), p: toTen(pB_Raw.pas) };
-            document.getElementById('analysisText').innerHTML = `
-                <h3>Numerical Results (0-10 Scale)</h3>
-                <table>
-                    <tr><th>Area</th><th>Partner A</th><th>Partner B</th><th>Gap</th></tr>
-                    <tr><td>Intimacy</td><td>${sA.i}</td><td>${sB.i}</td><td>${Math.abs(sA.i - sB.i).toFixed(1)}</td></tr>
-                    <tr><td>Passion</td><td>${sA.p}</td><td>${sB.p}</td><td>${Math.abs(sA.p - sB.p).toFixed(1)}</td></tr>
-                    <tr><td>Commitment</td><td>${sA.c}</td><td>${sB.c}</td><td>${Math.abs(sA.c - sB.c).toFixed(1)}</td></tr>
-                </table>`;
-        }
-    </script>
-</body>
-</html>
