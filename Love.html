@@ -8,21 +8,19 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
         .container { max-width: 800px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-        .instructions { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #f1c40f; font-size: 0.95em; }
+        .instructions-box { background: #fff9db; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #f1c40f; }
         .step { display: none; }
         .step.active { display: block; }
         .question { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
         .input-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        input[type="number"] { width: 70px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; text-align: center; }
+        input[type="number"] { width: 70px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-weight: bold; }
         .btn-container { display: flex; justify-content: space-between; margin-top: 30px; }
         button { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-next { background: #e74c3c; color: white; flex: 1; margin-left: 10px; }
         .btn-prev { background: #95a5a6; color: white; width: 100px; }
         #results { display: none; text-align: center; }
         .chart-container { position: relative; height: 500px; width: 100%; margin: 20px 0; background: #fff; }
-        .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; }
-        .gap-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .gap-table td, .gap-table th { padding: 10px; border: 1px solid #eee; text-align: center; }
+        .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -32,7 +30,22 @@
     
     <div id="setup-step" class="step active">
         <h1>Love Triangle Assessment</h1>
-        <p>This graph measures from a center 0 on the baseline: Up for Intimacy, Right for Commitment, and Left for Passion.</p>
+        
+        <div class="instructions-box">
+            <h3>How to take this assessment:</h3>
+            <ol>
+                <li><strong>Choose Solo or Couple:</strong> In Couple mode, you will take turns privately.</li>
+                <li><strong>The Scale:</strong> Rate each statement from <strong>1 to 5</strong>.
+                    <ul>
+                        <li><strong>1:</strong> Not at all / Never</li>
+                        <li><strong>3:</strong> Moderately / Sometimes</li>
+                        <li><strong>5:</strong> Completely / Always</li>
+                    </ul>
+                </li>
+                <li><strong>Privacy:</strong> If you are with your partner, the first person completes all 15 questions, then hands the device over. Your partner will <strong>not</strong> see your scores until the very end.</li>
+            </ol>
+        </div>
+
         <div class="btn-container">
             <button class="btn-next" onclick="startTest('solo')">Solo Assessment</button>
             <button class="btn-next" style="background:#3498db;" onclick="startTest('couple')">Couple Assessment</button>
@@ -41,7 +54,7 @@
 
     <div id="test-step" class="step">
         <h2 id="user-title">Partner A's Turn</h2>
-        <div class="instructions">Scale: 1 (Never) to 5 (Always).</div>
+        <p><em>Remember: 1 = Never, 5 = Always.</em></p>
         <div id="questions-wrapper"></div>
         <div class="btn-container">
             <button class="btn-prev" id="prevBtn" onclick="changePage(-1)">← Back</button>
@@ -50,15 +63,27 @@
     </div>
 
     <div id="handover-step" class="step" style="text-align: center; padding: 40px 0;">
-        <h2>Turn Complete</h2>
-        <p>Hand device to <strong>Partner B</strong>.</p>
-        <button class="btn-next" style="background:#3498db; max-width: 200px; margin: auto;" onclick="startPartnerB()">Start Partner B Turn</button>
+        <h2>Partner A Complete</h2>
+        <p>Please hand the device to <strong>Partner B</strong>.</p>
+        <p><em>Partner A, please look away to ensure privacy for Partner B.</em></p>
+        <button class="btn-next" style="background:#3498db; max-width: 250px; margin: auto;" onclick="startPartnerB()">Start Partner B Turn</button>
     </div>
 
     <div id="results" class="step">
         <h2>Relationship Map</h2>
         <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
-        <div id="analysisText" class="analysis-box"></div>
+        
+        <div class="analysis-box">
+            <h3>How to read this graph:</h3>
+            <p>The <strong>baseline (bottom line)</strong> starts at <strong>0</strong> in the center. Points are plotted from 0 to 10:</p>
+            <ul>
+                <li><strong>Commitment:</strong> Moves from 0 <strong>Right</strong>.</li>
+                <li><strong>Passion:</strong> Moves from 0 <strong>Left</strong>.</li>
+                <li><strong>Intimacy:</strong> Moves from 0 <strong>Straight Up</strong>.</li>
+            </ul>
+            <p>The distance between the Red and Blue points on each line represents the "Gap" in your perspectives.</p>
+        </div>
+
         <button onclick="location.reload()" style="margin-top:20px; background:#95a5a6; color:white; border-radius:8px; padding:10px;">New Assessment</button>
     </div>
 </div>
@@ -100,7 +125,7 @@
         wrapper.innerHTML = '';
         const start = currentPage * 5;
         questions.slice(start, start + 5).forEach((q, i) => {
-            wrapper.innerHTML += `<div class="question"><label>${start+i+1}. ${q.t}</label><div class="input-row"><input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"></div></div>`;
+            wrapper.innerHTML += `<div class="question"><label>${start+i+1}. ${q.t}</label><div class="input-row">Score: <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"></div></div>`;
         });
         document.getElementById('prevBtn').style.visibility = currentPage === 0 ? 'hidden' : 'visible';
         document.getElementById('nextBtn').innerText = (currentPage === 2) ? "Submit Turn" : "Next Page →";
@@ -110,6 +135,7 @@
         if (dir === 1 && currentPage === 2) { saveTurn(); return; }
         currentPage += dir;
         renderPage();
+        window.scrollTo(0,0);
     }
 
     function saveTurn() {
@@ -136,18 +162,16 @@
         document.getElementById('test-step').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         
-        const toTen = (val) => (((val - 5) / 20) * 10).toFixed(1);
+        const normalize = (val) => (((val - 5) / 20) * 10).toFixed(1);
 
-        // Coordinates: Intimacy (0, val), Commitment (val, 0), Passion (-val, 0)
         const getCoords = (data) => [
-            { x: 0, y: parseFloat(toTen(data.int)) }, // Intimacy (Up)
-            { x: parseFloat(toTen(data.com)), y: 0 }, // Commitment (Right)
-            { x: -parseFloat(toTen(data.pas)), y: 0 }, // Passion (Left)
-            { x: 0, y: parseFloat(toTen(data.int)) }  // Close triangle
+            { x: -parseFloat(normalize(data.pas)), y: 0 }, // Passion Left
+            { x: 0, y: parseFloat(normalize(data.int)) },  // Intimacy Up
+            { x: parseFloat(normalize(data.com)), y: 0 },  // Commitment Right
+            { x: -parseFloat(normalize(data.pas)), y: 0 }  // Close path
         ];
 
         const ctx = document.getElementById('loveTriangleChart').getContext('2d');
-        
         new Chart(ctx, {
             type: 'scatter',
             data: {
@@ -178,9 +202,6 @@
                 maintainAspectRatio: false
             }
         });
-
-        document.getElementById('analysisText').innerHTML = `<h3>Results Summary</h3>
-        <p>Points are plotted from the center (0,0). The vertical axis represents <b>Intimacy</b>. The horizontal axis represents <b>Passion</b> (left) and <b>Commitment</b> (right).</p>`;
     }
 </script>
 </body>
