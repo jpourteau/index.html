@@ -3,109 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attachment Style Map</title>
+    <title>Clinical Attachment Map</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; color: #2c3e50; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .instruction-bar { background: #fff9db; padding: 15px; border-left: 5px solid #f1c40f; margin-bottom: 25px; border-radius: 4px; font-size: 0.9em; }
         .step { display: none; }
         .active { display: block; }
-        .instruction-bar { background: #fff9db; padding: 15px; border-left: 5px solid #f1c40f; margin-bottom: 20px; font-size: 0.9em; }
-        .chart-container { position: relative; height: 450px; width: 100%; margin: 20px 0; border: 1px solid #eee; border-radius: 8px; }
-        select { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        .question { margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee; }
+        select { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; margin-top: 10px; font-size: 16px; }
         .nav-btns { display: flex; justify-content: space-between; margin-top: 25px; }
-        button { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background: #3498db; color: white; }
-        .btn-grey { background: #95a5a6; color: white; }
+        button { padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-next { background: #3498db; color: white; }
+        .btn-back { background: #95a5a6; color: white; }
+        #result-box { background: #f9f9f9; padding: 20px; border-radius: 10px; border-top: 5px solid #3498db; margin-top: 20px; }
+        .highlight { color: #e74c3c; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="instruction-bar">
-        <strong>Instructions:</strong> Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree). Use the 'Back' button to review previous answers.
+        <strong>Instructions:</strong> Rate 1 (Strongly Disagree) to 5 (Strongly Agree). This assessment identifies your attachment blueprint.
     </div>
 
     <div id="step1" class="step active">
-        <h2>Part 1: Secure & Anxious Patterns</h2>
-        <div id="q-container-1"></div>
+        <h2>Partner A: Your Patterns</h2>
+        <div id="q-list"></div>
         <div class="nav-btns">
             <div></div>
-            <button class="btn-primary" onclick="nextStep(2)">Next Page →</button>
+            <button class="btn-next" onclick="showResults()">See Results & Map →</button>
         </div>
     </div>
 
     <div id="step2" class="step">
-        <h2>Part 2: Avoidant & Fearful Patterns</h2>
-        <div id="q-container-2"></div>
-        <div class="nav-btns">
-            <button class="btn-grey" onclick="nextStep(1)">← Back</button>
-            <button class="btn-primary" onclick="finalize()">See My Map →</button>
+        <h2>Your Attachment Profile</h2>
+        <div style="height: 400px;"><canvas id="attachmentChart"></canvas></div>
+        <div id="result-box">
+            <h3>Assessment Prediction:</h3>
+            <p id="style-prediction"></p>
         </div>
-    </div>
-
-    <div id="step3" class="step">
-        <h2>Your Attachment Map</h2>
-        <div class="chart-container"><canvas id="attachmentChart"></canvas></div>
-        <div id="result-text" style="background:#f9f9f9; padding:20px; border-radius:8px;"></div>
-        <button class="btn-grey" style="width:100%; margin-top:20px;" onclick="location.reload()">Restart Assessment</button>
+        <button class="btn-back" style="width:100%; margin-top:20px;" onclick="location.reload()">Restart Assessment</button>
     </div>
 </div>
 
 <script>
     const questions = [
-        {t: "I feel comfortable depending on others.", c: "sec"},
-        {t: "I trust others will be there for me.", c: "sec"},
-        {t: "I often worry people will leave me.", c: "anx"},
-        {t: "I need constant reassurance.", c: "anx"},
-        {t: "I prefer independence over closeness.", c: "dis"},
-        {t: "I handle things on my own.", c: "dis"},
-        {t: "I want closeness but fear getting hurt.", c: "fea"},
-        {t: "I push people away when they get too close.", c: "fea"}
+        {t: "I find it easy to trust others and depend on them.", c: "sec"},
+        {t: "I am comfortable sharing my private thoughts and feelings.", c: "sec"},
+        {t: "I often worry that my partner doesn't really love me.", c: "anx"},
+        {t: "I get frustrated when others don't want to be as close as I do.", c: "anx"},
+        {t: "I prefer to keep my distance from romantic partners.", c: "dis"},
+        {t: "Independence is more important to me than intimacy.", c: "dis"},
+        {t: "I want to be close, but I'm afraid of being let down.", c: "fea"},
+        {t: "I find it hard to trust others even when I want to.", c: "fea"}
     ];
 
-    function renderQuestions() {
-        const c1 = document.getElementById('q-container-1');
-        const c2 = document.getElementById('q-container-2');
+    function init() {
+        const list = document.getElementById('q-list');
         questions.forEach((q, i) => {
-            const html = `<div style="margin-bottom:15px;"><label>${i+1}. ${q.t}</label><br>
-                <select class="q-val" data-cat="${q.c}">
-                    <option value="1">1 - Strongly Disagree</option><option value="2">2</option>
-                    <option value="3" selected>3 - Neutral</option><option value="4">4</option>
-                    <option value="5">5 - Strongly Agree</option>
-                </select></div>`;
-            if (i < 4) c1.innerHTML += html; else c2.innerHTML += html;
-        });
-    }
-
-    function nextStep(s) {
-        document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
-        document.getElementById('step' + s).classList.add('active');
-    }
-
-    function finalize() {
-        nextStep(3);
-        const scores = {sec:0, anx:0, dis:0, fea:0};
-        document.querySelectorAll('.q-val').forEach(s => scores[s.dataset.cat] += parseInt(s.value));
-
-        new Chart(document.getElementById('attachmentChart'), {
-            type: 'radar',
-            data: {
-                labels: ['Secure', 'Anxious', 'Dismissive', 'Fearful'],
-                datasets: [{
-                    label: 'Your Profile',
-                    data: [scores.sec, scores.anx, scores.dis, scores.fea],
-                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                    borderColor: '#3498db',
-                    borderWidth: 3
-                }]
-            },
-            options: { scales: { r: { min: 0, max: 10 } } }
-        });
-
-        document.getElementById('result-text').innerHTML = "<h3>Analysis:</h3><p>Your map shows how your attachment styles interact. A balanced shape toward 'Secure' indicates stability, while spikes toward other corners suggest areas for emotional growth.</p>";
-    }
-    renderQuestions();
-</script>
-</body>
-</html>
+            list.innerHTML += `<div class="question"><label>${i+1}. ${q.t}</label>
+                <select class="ans" data-cat="${q.c}">
+                    <option value="1">1 - Strongly Disagree</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3 - Neutral</option>
+                    <option value="4">4</option>
+                    <option value="5">5 - Strongly Agree
