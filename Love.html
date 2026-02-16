@@ -3,65 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sternberg Love Triangle Assessment</title>
+    <title>Sternberg Love Triangle</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-        .instructions-box { background: #fff9db; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #f1c40f; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 750px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .instructions-box { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #f1c40f; }
         .step { display: none; }
         .step.active { display: block; }
-        .question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
-        .input-row { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        input[type="number"] { width: 70px; padding: 12px; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.1em; }
-        .btn-container { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
-        button { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; }
-        .btn-next { background: #e74c3c; color: white; flex: 1; }
-        .btn-prev { background: #95a5a6; color: white; width: 100px; }
-        #results { display: none; text-align: center; }
-        .chart-container { position: relative; height: 500px; width: 100%; margin: 20px 0; background: #fff; border: 1px solid #eee; border-radius: 8px; }
-        .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; line-height: 1.6; }
-        .gap-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        .gap-table td, .gap-table th { padding: 12px; border: 1px solid #eee; text-align: center; }
+        .question { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .input-row { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        input[type="number"] { width: 60px; padding: 10px; border: 2px solid #ddd; border-radius: 6px; text-align: center; font-size: 1.1em; }
+        .btn-container { display: flex; justify-content: space-between; margin-top: 25px; gap: 10px; }
+        button { padding: 14px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        .btn-red { background: #e74c3c; color: white; flex: 1; }
+        .btn-blue { background: #3498db; color: white; flex: 1; }
+        .btn-grey { background: #95a5a6; color: white; }
+        .chart-container { position: relative; height: 450px; width: 100%; margin-top: 20px; border: 1px solid #eee; }
+        .analysis-box { text-align: left; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px; border-left: 5px solid #e74c3c; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="margin-bottom: 20px;"><a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a></div>
+    <div style="margin-bottom: 15px;"><a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a></div>
     
-    <div id="setup-step" class="step active">
+    <div id="step-0" class="step active">
         <h1>Love Triangle Assessment</h1>
         <div class="instructions-box">
-            <h3>How to take this assessment:</h3>
-            <p>1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.</p>
-            <p>2. Partners take the test one at a time. Partner A completes the test, then hands the device to Partner B.</p>
-            <p>3. Your results will be mapped on a <strong>0 to 10 scale</strong> starting from the center of the baseline.</p>
+            <h3>Instructions:</h3>
+            <p>1. Answer 15 questions honestly (1 = Never, 5 = Always).</p>
+            <p>2. Partners take turns privately. Partner A goes first.</p>
+            <p>3. Results map 0-10 from the center: Up (Intimacy), Right (Commitment), Left (Passion).</p>
         </div>
-        <div class="btn-container">
-            <button class="btn-next" onclick="startTest('solo')">Solo Assessment</button>
-            <button class="btn-next" style="background:#3498db;" onclick="startTest('couple')">Couple Assessment</button>
-        </div>
+        <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
     </div>
 
-    <div id="test-step" class="step">
+    <div id="step-1" class="step">
         <h2 id="user-title">Partner A's Turn</h2>
-        <p><em>Scale: 1 = Never, 3 = Sometimes, 5 = Always</em></p>
         <div id="questions-wrapper"></div>
         <div class="btn-container">
-            <button class="btn-prev" id="prevBtn" onclick="changePage(-1)">← Back</button>
-            <button class="btn-next" id="nextBtn" onclick="changePage(1)">Next Page →</button>
+            <button class="btn-grey" id="backBtn" onclick="prevPage()" style="display:none;">Back</button>
+            <button class="btn-red" id="nextBtn" onclick="nextPage()">Next Page</button>
         </div>
     </div>
 
-    <div id="handover-step" class="step" style="text-align: center; padding: 50px 0;">
-        <h2>Partner A Complete</h2>
-        <p>Please hand the device to <strong>Partner B</strong>.</p>
-        <button class="btn-next" style="background:#3498db; max-width: 300px; margin: auto;" onclick="startPartnerB()">Start Partner B Turn</button>
+    <div id="step-2" class="step" style="text-align: center;">
+        <h2>Turn Complete</h2>
+        <p>Hand the device to <strong>Partner B</strong>.</p>
+        <button class="btn-blue" onclick="startPartnerB()">Start Partner B Turn</button>
     </div>
 
-    <div id="results" class="step">
-        <h2>Your Love Triangle Map</h2>
+    <div id="step-3" class="step">
+        <h2>Relationship Map</h2>
         <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
         <div id="analysisText" class="analysis-box"></div>
-        <button onclick="location.reload()" style="margin-top:20px; background:#95a5a6;
+        <button class="btn-grey" onclick="location.reload()" style="margin-top:20px; width:100%;">Restart</button>
+    </div>
+</div>
+
+<script>
+    // DATA & STATE
+    let pA_Raw = { int: 0, pas: 0, com: 0 };
+    let pB_Raw = { int: 0, pas: 0, com: 0 };
+    let curPage = 0;
+    let curTurn = 'A';
+
+    const questions = [
+        { t: "I have a warm relationship with my partner.", c: "int" },
+        { t: "I receive considerable emotional support.", c: "int" },
+        { t: "I value my partner greatly in my life.", c: "int" },
+        { t: "I feel my partner really understands me.", c: "int" },
+        { t: "I feel I can really trust my partner.", c: "int" },
+        { t: "Our relationship is very romantic.", c: "pas" },
+        { t: "I find my partner very attractive.", c: "pas" },
+        { t: "I can't imagine anyone else making me happy.", c: "pas" },
+        { t: "I think about my partner often.", c: "pas" },
+        { t: "There is something 'magical' about us.", c: "pas" },
+        { t: "My commitment is solid.", c: "com" },
+        { t: "I have confidence in our stability.", c: "com" },
+        { t: "I expect our love to last forever.", c: "com" },
+        { t: "I view our relationship as permanent.", c: "com" },
+        { t: "I feel responsibility toward my partner.", c: "com" }
+    ];
+
+    // NAVIGATION
+    function goToStep(idx) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-' + idx).classList.add('active');
+        if(idx === 1) renderPage();
+        window.scrollTo(0,0);
+    }
+
+    function renderPage() {
+        const wrapper = document.getElementById('questions-wrapper');
+        wrapper.innerHTML = '';
+        const start = curPage * 5;
+        questions.slice(start, start + 5).forEach((q, i) => {
+            wrapper.innerHTML += `
+                <div class="question">
+                    <label>${start+i+1}. ${q.t}</label>
+                    <div class="input-row">Score (1-5): 
+                        <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}">
+                    </div>
+                </div>`;
+        });
+        document.getElementById('backBtn').style.display = curPage === 0 ? 'none' : 'block';
+        document.getElementById('nextBtn').innerText = curPage === 2 ? 'Submit' : 'Next Page';
+    }
+
+    function nextPage() {
+        if (curPage < 2) {
+            curPage++;
+            renderPage();
+        } else {
+            saveData();
+        }
+    }
+
+    function prevPage() {
+        if (curPage > 0) {
+            curPage--;
+            renderPage();
+        }
+    }
+
+    function saveData() {
+        let s = { int: 0, pas: 0, com: 0 };
+        document.querySelectorAll('.score-input').forEach(i => {
+            s[i.dataset.cat] += parseInt(i.value) || 0;
+        });
+        if (curTurn === 'A') {
+            pA_Raw = s;
+            goToStep(2);
+        } else {
+            pB_Raw = s;
+            finalize();
+        }
+    }
+
+    function startPartnerB() {
+        curTurn = 'B';
+        curPage = 0;
+        document.getElementById('user-title').innerText = "Partner B's Turn";
+        goToStep(1);
+    }
+
+    function finalize() {
+        goToStep(3);
+        const toTen = (v) => (((v - 5) / 20) * 10).toFixed(1);
+        const getPts = (d) => [
+            { x: -parseFloat(toTen(d.pas)), y: 0 },
+            { x: 0, y: parseFloat(toTen(d.int)) },
+            { x: parseFloat(toTen(d.com)), y: 0 },
+            { x: -parseFloat(toTen(d.pas)), y: 0 }
+        ];
+
+        new Chart(document.getElementById('loveTriangleChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)', borderWidth: 3 },
+                    { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.1)', borderWidth: 3 }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' } },
+                    y: { min: 0, max: 10, title: { display: true, text: 'Intimacy (Up)' } }
+                },
+                maintainAspectRatio: false
+            }
+        });
+
+        document.getElementById('analysisText').innerHTML = "<h3>Map Analysis:</h3><p>Your triangles are plotted from the 0-point on the baseline. The overlap shows areas of agreement; the gaps show where your perspectives differ.</p>";
+    }
+</script>
+</body>
+</html>
