@@ -1,3 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sternberg Love Triangle</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .instructions-box { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #f1c40f; }
+        .step { display: none; }
+        .step.active { display: block; }
+        .question { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .input-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        input[type="number"] { width: 70px; padding: 10px; border: 2px solid #ddd; border-radius: 6px; text-align: center; font-size: 1.1em; font-weight: bold; }
+        .btn-container { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
+        button { padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        .btn-red { background: #e74c3c; color: white; flex: 1; }
+        .btn-blue { background: #3498db; color: white; flex: 1; }
+        .btn-grey { background: #95a5a6; color: white; }
+        .chart-container { position: relative; height: 500px; width: 100%; margin-top: 20px; background: white; border: 1px solid #eee; border-radius: 8px; }
+        .analysis-box { text-align: left; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px; border-left: 5px solid #e74c3c; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="margin-bottom: 15px;"><a href="index.html" style="text-decoration:none; color:#e74c3c; font-weight:bold;">← Back to Hub</a></div>
+    
+    <div id="step-0" class="step active">
+        <h1>Love Triangle Assessment</h1>
+        <div class="instructions-box">
+            <h3>How to take the assessment:</h3>
+            <p>1. Rate each statement from <strong>1 (Never)</strong> to <strong>5 (Always)</strong>.</p>
+            <p>2. In Couple Mode, take turns privately. Partner A completes the test, then hands the device to Partner B.</p>
+            <p>3. Your results will be plotted 0-10 from the <strong>center of the baseline</strong>.</p>
+        </div>
+        <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
+    </div>
+
+    <div id="step-1" class="step">
+        <h2 id="user-title">Partner A's Turn</h2>
+        <div id="questions-wrapper"></div>
+        <div class="btn-container">
+            <button class="btn-grey" id="backBtn" onclick="prevPage()" style="display:none;">Back</button>
+            <button class="btn-red" id="nextBtn" onclick="nextPage()">Next Page</button>
+        </div>
+    </div>
+
+    <div id="step-2" class="step" style="text-align: center;">
+        <h2>Turn Complete</h2>
+        <p>Please hand the device to <strong>Partner B</strong>.</p>
+        <button class="btn-blue" onclick="startPartnerB()">Start Partner B Turn</button>
+    </div>
+
+    <div id="step-3" class="step">
+        <h2>Your Relationship Map</h2>
+        <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
+        <div id="analysisText" class="analysis-box"></div>
+        <button class="btn-grey" onclick="location.reload()" style="margin-top:20px; width:100%;">Restart Assessment</button>
+    </div>
+</div>
+
 <script>
     let pA_Raw = { int: 0, pas: 0, com: 0 };
     let pB_Raw = { int: 0, pas: 0, com: 0 };
@@ -71,17 +137,15 @@
     function finalize() {
         goToStep(3);
         const toTen = (v) => Math.max(0, ((v - 5) / 20) * 10).toFixed(1);
-
         const getPts = (d) => {
             let p = parseFloat(toTen(d.pas));
             let i = parseFloat(toTen(d.int));
             let c = parseFloat(toTen(d.com));
-            // Path: Passion -> Intimacy -> Commitment -> Passion
             return [
                 { x: -p, y: 0 },
                 { x: 0, y: i },
                 { x: c, y: 0 },
-                { x: -p, y: 0 } // Closing the shape for the fill
+                { x: -p, y: 0 } 
             ];
         };
 
@@ -89,51 +153,20 @@
             type: 'scatter',
             data: {
                 datasets: [
-                    { 
-                        label: 'Partner A', 
-                        data: getPts(pA_Raw), 
-                        showLine: true, 
-                        borderColor: '#e74c3c', 
-                        backgroundColor: 'rgba(231,76,60,0.3)', 
-                        borderWidth: 3, 
-                        fill: 'shape', // Standard Chart.js v4 polygon fill
-                        pointRadius: 5,
-                        tension: 0 // Keep lines straight for the triangle
-                    },
-                    { 
-                        label: 'Partner B', 
-                        data: getPts(pB_Raw), 
-                        showLine: true, 
-                        borderColor: '#3498db', 
-                        backgroundColor: 'rgba(52,152,219,0.3)', 
-                        borderWidth: 3, 
-                        fill: 'shape',
-                        pointRadius: 5,
-                        tension: 0
-                    }
+                    { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.3)', borderWidth: 3, fill: 'shape', pointRadius: 5, tension: 0 },
+                    { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.3)', borderWidth: 3, fill: 'shape', pointRadius: 5, tension: 0 }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { 
-                        min: -10, 
-                        max: 10, 
-                        title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' },
-                        grid: { color: c => c.tick.value === 0 ? '#000' : '#eee', lineWidth: c => c.tick.value === 0 ? 2 : 1 }
-                    },
-                    y: { 
-                        min: 0, 
-                        max: 10, 
-                        title: { display: true, text: 'Intimacy' },
-                        grid: { color: c => c.tick.value === 0 ? '#000' : '#eee', lineWidth: c => c.tick.value === 0 ? 2 : 1 }
-                    }
+                    x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' }, grid: { color: c => c.tick.value === 0 ? '#000' : '#eee', lineWidth: c => c.tick.value === 0 ? 2 : 1 } },
+                    y: { min: 0, max: 10, title: { display: true, text: 'Intimacy' }, grid: { color: c => c.tick.value === 0 ? '#000' : '#eee', lineWidth: c => c.tick.value === 0 ? 2 : 1 } }
                 }
             }
         });
 
-        // Numerical Analysis table logic...
         const sA = { i: toTen(pA_Raw.int), c: toTen(pA_Raw.com), p: toTen(pA_Raw.pas) };
         const sB = { i: toTen(pB_Raw.int), c: toTen(pB_Raw.com), p: toTen(pB_Raw.pas) };
         document.getElementById('analysisText').innerHTML = `
@@ -146,3 +179,6 @@
             </table>`;
     }
 </script>
+
+</body>
+</html>
