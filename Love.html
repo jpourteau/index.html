@@ -126,4 +126,84 @@
                 document.getElementById('test-step').style.display = 'none';
                 document.getElementById('handover-step').style.display = 'block';
             } else { finalize(); }
-        } else { p
+        } else { pB_Raw = s; finalize(); }
+    }
+
+    function startPartnerB() {
+        currentTurn = 'B'; currentPage = 0;
+        document.getElementById('user-title').innerText = "Partner B's Turn";
+        document.getElementById('handover-step').style.display = 'none';
+        document.getElementById('test-step').style.display = 'block';
+        renderPage();
+    }
+
+    function finalize() {
+        document.getElementById('test-step').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        
+        // Scale 1-10 conversion logic
+        const toTen = (val) => (((val - 5) / 20) * 9 + 1).toFixed(1);
+
+        const aData = [toTen(pA_Raw.int), toTen(pA_Raw.com), toTen(pA_Raw.pas)];
+        const bData = mode === 'couple' ? [toTen(pB_Raw.int), toTen(pB_Raw.com), toTen(pB_Raw.pas)] : null;
+
+        const ctx = document.getElementById('loveTriangleChart').getContext('2d');
+        const datasets = [{
+            label: 'Partner A',
+            data: aData,
+            backgroundColor: 'rgba(231, 76, 60, 0.3)',
+            borderColor: '#e74c3c',
+            borderWidth: 4,
+            pointRadius: 6,
+            pointHoverRadius: 8
+        }];
+
+        if (bData) {
+            datasets.push({
+                label: 'Partner B',
+                data: bData,
+                backgroundColor: 'rgba(52, 152, 219, 0.3)',
+                borderColor: '#3498db',
+                borderWidth: 4,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            });
+        }
+
+        new Chart(ctx, {
+            type: 'radar',
+            data: { labels: ['Intimacy (Top)', 'Commitment (Right)', 'Passion (Left)'], datasets: datasets },
+            options: {
+                scales: {
+                    r: {
+                        min: 0, max: 10,
+                        ticks: { stepSize: 1, display: true, font: { size: 10 } },
+                        grid: { color: '#e0e0e0' },
+                        pointLabels: { font: { size: 14, weight: 'bold' } }
+                    }
+                },
+                maintainAspectRatio: false
+            }
+        });
+
+        // Analysis Table
+        let html = "<h3>Data Points (1-10 Scale)</h3><table class='gap-table'><tr><th>Pillar</th><th>A</th>" + (bData ? "<th>B</th><th>Gap</th>" : "") + "</tr>";
+        const labels = ["Intimacy", "Commitment", "Passion"];
+        let maxG = -1, maxP = "";
+
+        labels.forEach((l, i) => {
+            let gap = bData ? Math.abs(aData[i] - bData[i]).toFixed(1) : 0;
+            if (parseFloat(gap) > maxG) { maxG = parseFloat(gap); maxP = l; }
+            html += `<tr><td class="pillar-label">${l}</td><td>${aData[i]}</td>` + (bData ? `<td>${bData[i]}</td><td>${gap}</td>` : "") + `</tr>`;
+        });
+        html += "</table>";
+        
+        if (bData) {
+            html += `<p style="margin-top:20px;">The largest gap is in <strong>${maxP}</strong> (${maxG} points difference). This visual map shows exactly where your perspectives diverge.</p>`;
+        }
+        document.getElementById('analysisText').innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
