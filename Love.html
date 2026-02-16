@@ -6,7 +6,7 @@
     <title>Sternberg Love Triangle Assessment</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; line-height: 1.6; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
         .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .instructions-box { background: #fff9db; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #f1c40f; }
         .step { display: none; }
@@ -15,7 +15,7 @@
         .input-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
         input[type="number"] { width: 70px; padding: 10px; border: 2px solid #ddd; border-radius: 6px; text-align: center; font-size: 1.1em; font-weight: bold; }
         .btn-container { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
-        button { padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; transition: 0.2s; }
+        button { padding: 15px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; }
         .btn-red { background: #e74c3c; color: white; flex: 1; }
         .btn-blue { background: #3498db; color: white; flex: 1; }
         .btn-grey { background: #95a5a6; color: white; }
@@ -23,7 +23,6 @@
         .analysis-box { text-align: left; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px; border-left: 5px solid #e74c3c; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
@@ -39,7 +38,7 @@
             <p>2. In Couple Mode, take turns privately. Partner A completes the test, then hands the device to Partner B.</p>
             <p>3. Your results will be plotted 0-10 from the <strong>center of the baseline</strong>.</p>
         </div>
-        <button class="btn-red" onclick="startApp()">Start Assessment</button>
+        <button class="btn-red" onclick="goToStep(1)">Start Assessment</button>
     </div>
 
     <div id="step-1" class="step">
@@ -66,7 +65,6 @@
 </div>
 
 <script>
-    // State Management
     let pA_Raw = { int: 0, pas: 0, com: 0 };
     let pB_Raw = { int: 0, pas: 0, com: 0 };
     let curPage = 0;
@@ -90,11 +88,7 @@
         { t: "I feel responsibility toward my partner.", c: "com" }
     ];
 
-    function startApp() {
-        showStep(1);
-    }
-
-    function showStep(idx) {
+    function goToStep(idx) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById('step-' + idx).classList.add('active');
         if(idx === 1) renderPage();
@@ -105,4 +99,83 @@
         const wrapper = document.getElementById('questions-wrapper');
         wrapper.innerHTML = '';
         const start = curPage * 5;
-        questions.slice(start, start +
+        questions.slice(start, start + 5).forEach((q, i) => {
+            wrapper.innerHTML += `
+                <div class="question">
+                    <label>${start+i+1}. ${q.t}</label>
+                    <div class="input-row">Score: 
+                        <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}">
+                    </div>
+                </div>`;
+        });
+        document.getElementById('backBtn').style.display = curPage === 0 ? 'none' : 'block';
+        document.getElementById('nextBtn').innerText = curPage === 2 ? 'Submit' : 'Next Page';
+    }
+
+    function nextPage() {
+        if (curPage < 2) { curPage++; renderPage(); } 
+        else { saveData(); }
+    }
+
+    function prevPage() {
+        if (curPage > 0) { curPage--; renderPage(); }
+    }
+
+    function saveData() {
+        let s = { int: 0, pas: 0, com: 0 };
+        document.querySelectorAll('.score-input').forEach(i => {
+            s[i.dataset.cat] += parseInt(i.value) || 0;
+        });
+        if (curTurn === 'A') { pA_Raw = s; goToStep(2); } 
+        else { pB_Raw = s; finalize(); }
+    }
+
+    function startPartnerB() {
+        curTurn = 'B'; curPage = 0;
+        document.getElementById('user-title').innerText = "Partner B's Turn";
+        goToStep(1);
+    }
+
+    function finalize() {
+        goToStep(3);
+        const toTen = (v) => (((v - 5) / 20) * 10).toFixed(1);
+        const getPts = (d) => [
+            { x: -parseFloat(toTen(d.pas)), y: 0 },
+            { x: 0, y: parseFloat(toTen(d.int)) },
+            { x: parseFloat(toTen(d.com)), y: 0 },
+            { x: -parseFloat(toTen(d.pas)), y: 0 } 
+        ];
+
+        new Chart(document.getElementById('loveTriangleChart'), {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'Partner A', data: getPts(pA_Raw), showLine: true, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.3)', borderWidth: 3, fill: true },
+                    { label: 'Partner B', data: getPts(pB_Raw), showLine: true, borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.3)', borderWidth: 3, fill: true }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { min: -10, max: 10, title: { display: true, text: 'Passion (Left) <--- 0 ---> Commitment (Right)' } },
+                    y: { min: 0, max: 10, title: { display: true, text: 'Intimacy' } }
+                }
+            }
+        });
+
+        // Summary Table
+        const sA = { i: toTen(pA_Raw.int), c: toTen(pA_Raw.com), p: toTen(pA_Raw.pas) };
+        const sB = { i: toTen(pB_Raw.int), c: toTen(pB_Raw.com), p: toTen(pB_Raw.pas) };
+        document.getElementById('analysisText').innerHTML = `
+            <h3>Numerical Results (0-10 Scale)</h3>
+            <table>
+                <tr><th>Area</th><th>Partner A</th><th>Partner B</th><th>Gap</th></tr>
+                <tr><td>Intimacy</td><td>${sA.i}</td><td>${sB.i}</td><td>${Math.abs(sA.i - sB.i).toFixed(1)}</td></tr>
+                <tr><td>Passion</td><td>${sA.p}</td><td>${sB.p}</td><td>${Math.abs(sA.p - sB.p).toFixed(1)}</td></tr>
+                <tr><td>Commitment</td><td>${sA.c}</td><td>${sB.c}</td><td>${Math.abs(sA.c - sB.c).toFixed(1)}</td></tr>
+            </table>`;
+    }
+</script>
+</body>
+</html>
