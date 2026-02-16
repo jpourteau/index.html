@@ -23,7 +23,6 @@
         .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; }
         .gap-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
         .gap-table td, .gap-table th { padding: 12px; border: 1px solid #eee; text-align: center; }
-        .pillar-label { font-weight: bold; color: #2c3e50; }
     </style>
 </head>
 <body>
@@ -33,7 +32,7 @@
     
     <div id="setup-step" class="step active">
         <h1>Love Triangle Assessment</h1>
-        <p>Complete the 15-question assessment to map your relationship on a 1-10 scale.</p>
+        <p>This assessment uses 15 points to map your relationship on a 1-10 scale starting from the base.</p>
         <div class="btn-container">
             <button class="btn-next" onclick="startTest('solo')">Solo Assessment</button>
             <button class="btn-next" style="background:#3498db;" onclick="startTest('couple')">Couple Assessment</button>
@@ -57,7 +56,7 @@
     </div>
 
     <div id="results" class="step">
-        <h2>Your Love Triangle (Scale 1-10)</h2>
+        <h2>Your Love Triangle (0-10 from Center)</h2>
         <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
         <div id="analysisText" class="analysis-box"></div>
         <button onclick="location.reload()" style="margin-top:20px; background:#95a5a6; color:white; border-radius: 8px; padding: 10px 20px;">Restart Assessment</button>
@@ -82,7 +81,7 @@
         { t: "I can't imagine anyone else making me happy.", c: "pas" },
         { t: "I think about my partner often.", c: "pas" },
         { t: "There is something 'magical' about us.", c: "pas" },
-        { t: "I view my commitment as a solid one.", c: "com" },
+        { t: "My commitment is solid.", c: "com" },
         { t: "I have confidence in our stability.", c: "com" },
         { t: "I expect our love to last forever.", c: "com" },
         { t: "I view our relationship as permanent.", c: "com" },
@@ -141,8 +140,8 @@
         document.getElementById('test-step').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         
-        // Scale 1-10 conversion logic
-        const toTen = (val) => (((val - 5) / 20) * 9 + 1).toFixed(1);
+        // Normalize 5-25 range to 0-10 scale
+        const toTen = (val) => (((val - 5) / 20) * 10).toFixed(1);
 
         const aData = [toTen(pA_Raw.int), toTen(pA_Raw.com), toTen(pA_Raw.pas)];
         const bData = mode === 'couple' ? [toTen(pB_Raw.int), toTen(pB_Raw.com), toTen(pB_Raw.pas)] : null;
@@ -151,56 +150,62 @@
         const datasets = [{
             label: 'Partner A',
             data: aData,
-            backgroundColor: 'rgba(231, 76, 60, 0.3)',
+            backgroundColor: 'rgba(231, 76, 60, 0.2)',
             borderColor: '#e74c3c',
-            borderWidth: 4,
+            borderWidth: 3,
             pointRadius: 6,
-            pointHoverRadius: 8
+            pointBackgroundColor: '#e74c3c'
         }];
 
         if (bData) {
             datasets.push({
                 label: 'Partner B',
                 data: bData,
-                backgroundColor: 'rgba(52, 152, 219, 0.3)',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
                 borderColor: '#3498db',
-                borderWidth: 4,
+                borderWidth: 3,
                 pointRadius: 6,
-                pointHoverRadius: 8
+                pointBackgroundColor: '#3498db'
             });
         }
 
         new Chart(ctx, {
             type: 'radar',
-            data: { labels: ['Intimacy (Top)', 'Commitment (Right)', 'Passion (Left)'], datasets: datasets },
+            data: { 
+                labels: ['Intimacy', 'Commitment', 'Passion'], 
+                datasets: datasets 
+            },
             options: {
                 scales: {
                     r: {
-                        min: 0, max: 10,
-                        ticks: { stepSize: 1, display: true, font: { size: 10 } },
-                        grid: { color: '#e0e0e0' },
-                        pointLabels: { font: { size: 14, weight: 'bold' } }
+                        min: 0,
+                        max: 10,
+                        beginAtZero: true,
+                        ticks: { stepSize: 2, display: true },
+                        grid: { color: '#ccc' },
+                        angleLines: { color: '#aaa' },
+                        pointLabels: { font: { size: 14, weight: 'bold' }, padding: 20 }
                     }
+                },
+                plugins: {
+                    legend: { position: 'top' }
                 },
                 maintainAspectRatio: false
             }
         });
 
         // Analysis Table
-        let html = "<h3>Data Points (1-10 Scale)</h3><table class='gap-table'><tr><th>Pillar</th><th>A</th>" + (bData ? "<th>B</th><th>Gap</th>" : "") + "</tr>";
+        let html = "<h3>Scale (0 to 10)</h3><table class='gap-table'><tr><th>Area</th><th>A</th>" + (bData ? "<th>B</th><th>Gap</th>" : "") + "</tr>";
         const labels = ["Intimacy", "Commitment", "Passion"];
-        let maxG = -1, maxP = "";
-
+        
         labels.forEach((l, i) => {
-            let gap = bData ? Math.abs(aData[i] - bData[i]).toFixed(1) : 0;
-            if (parseFloat(gap) > maxG) { maxG = parseFloat(gap); maxP = l; }
-            html += `<tr><td class="pillar-label">${l}</td><td>${aData[i]}</td>` + (bData ? `<td>${bData[i]}</td><td>${gap}</td>` : "") + `</tr>`;
+            let valA = aData[i];
+            let valB = bData ? bData[i] : 0;
+            let gap = bData ? Math.abs(valA - valB).toFixed(1) : 0;
+            html += `<tr><td style="font-weight:bold;">${l}</td><td>${valA}</td>` + (bData ? `<td>${valB}</td><td>${gap}</td>` : "") + `</tr>`;
         });
         html += "</table>";
         
-        if (bData) {
-            html += `<p style="margin-top:20px;">The largest gap is in <strong>${maxP}</strong> (${maxG} points difference). This visual map shows exactly where your perspectives diverge.</p>`;
-        }
         document.getElementById('analysisText').innerHTML = html;
     }
 </script>
