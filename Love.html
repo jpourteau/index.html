@@ -20,7 +20,6 @@
         button { padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; }
         .btn-next { background: #e74c3c; color: white; flex: 1; }
         .btn-prev { background: #95a5a6; color: white; width: 100px; }
-        .btn-finish { background: #27ae60; color: white; flex: 1; }
         #results { display: none; margin-top: 30px; text-align: center; }
         .chart-container { position: relative; height: 450px; width: 100%; margin: 20px 0; }
         .analysis-box { text-align: left; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #e74c3c; }
@@ -37,20 +36,14 @@
             <strong>Privacy Mode:</strong> Each partner takes the test privately. Your answers will not be revealed until the very end.
         </div>
         <div class="btn-container">
-            <button class="btn-next" onclick="startTest('solo')">Solo Assessment</button>
-            <button class="btn-next" style="background:#3498db;" onclick="startTest('couple')">Couple Assessment</button>
+            <button id="soloBtn" class="btn-next">Solo Assessment</button>
+            <button id="coupleBtn" class="btn-next" style="background:#3498db;">Couple Assessment</button>
         </div>
     </div>
 
     <div id="test-step" class="step">
         <h2 id="user-title">Partner A's Turn</h2>
-        <div class="instructions">
-            <strong>Scale:</strong> 1 (Never) to 5 (Always). <br>
-            Please be honest; your partner cannot see these specific answers.
-        </div>
-        
         <div id="questions-wrapper"></div>
-
         <div class="btn-container">
             <button class="btn-prev" id="back-btn" onclick="prevPage()">← Back</button>
             <button class="btn-next" id="next-btn" onclick="nextPage()">Next Page →</button>
@@ -59,20 +52,25 @@
 
     <div id="handover-step" class="step" style="text-align: center; padding: 50px 0;">
         <h2>Partner A Finished</h2>
-        <p style="font-size: 1.2em;">Please hand the device to <strong>Partner B</strong>.</p>
-        <p><em>Partner A, please look away so your partner can answer privately.</em></p>
-        <button class="btn-next" style="background:#3498db; max-width: 300px; margin: 20px auto;" onclick="startPartnerB()">Partner B: Start My Turn</button>
+        <p>Hand the device to <strong>Partner B</strong>.</p>
+        <button class="btn-next" style="background:#3498db;" onclick="startPartnerB()">Partner B: Start My Turn</button>
     </div>
 
     <div id="results" class="step">
         <h2>Your Visual Results</h2>
         <div class="chart-container"><canvas id="loveTriangleChart"></canvas></div>
         <div id="analysisText" class="analysis-box"></div>
-        <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; background:#95a5a6; color:white;">Start New Assessment</button>
+        <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; background:#95a5a6; color:white;">Start New</button>
     </div>
 </div>
 
 <script>
+    // SAFETY SHIELD: Ensures buttons work even if page loads slowly
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('soloBtn').onclick = () => startTest('solo');
+        document.getElementById('coupleBtn').onclick = () => startTest('couple');
+    });
+
     let mode = 'solo';
     let currentPage = 0;
     let currentTurn = 'A';
@@ -117,14 +115,9 @@
             let block = document.createElement('div');
             block.className = `question-block ${i === currentPage ? 'active' : ''}`;
             block.id = `page-${i}`;
-            
             questions.slice(i * 5, (i + 1) * 5).forEach((q, idx) => {
                 let qNum = (i * 5) + idx;
-                block.innerHTML += `
-                    <div class="question">
-                        <label>${qNum + 1}. ${q.t}</label>
-                        <div class="input-row">Score: <input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"></div>
-                    </div>`;
+                block.innerHTML += `<div class="question"><label>${qNum + 1}. ${q.t}</label><div class="input-row"><input type="number" class="score-input" min="1" max="5" value="3" data-cat="${q.c}"></div></div>`;
             });
             wrapper.appendChild(block);
         }
@@ -159,7 +152,6 @@
     function submitTurn() {
         let s = { int: 0, pas: 0, com: 0 };
         document.querySelectorAll('.score-input').forEach(i => { s[i.dataset.cat] += parseInt(i.value); });
-
         if (currentTurn === 'A') {
             partnerA_Scores = s;
             if (mode === 'couple') showStep('handover-step');
@@ -181,42 +173,10 @@
     function finalizeResults() {
         showStep('results');
         const ctx = document.getElementById('loveTriangleChart').getContext('2d');
-        
-        // Data order: [Intimacy, Commitment, Passion]
-        const ds = [{
-            label: 'Partner A',
-            data: [partnerA_Scores.int, partnerA_Scores.com, partnerA_Scores.pas],
-            backgroundColor: 'rgba(231, 76, 60, 0.4)',
-            borderColor: '#e74c3c',
-            borderWidth: 3
-        }];
-
-        if (partnerB_Scores) {
-            ds.push({
-                label: 'Partner B',
-                data: [partnerB_Scores.int, partnerB_Scores.com, partnerB_Scores.pas],
-                backgroundColor: 'rgba(52, 152, 219, 0.4)',
-                borderColor: '#3498db',
-                borderWidth: 3
-            });
-        }
-
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Intimacy (Top)', 'Commitment (Right)', 'Passion (Left)'],
-                datasets: ds
-            },
-            options: {
-                scales: {
-                    r: {
-                        suggestedMin: 0,
-                        suggestedMax: 25,
-                        ticks: { display: false }
-                    }
-                },
-                maintainAspectRatio: false
-            }
-        });
-
-        document.getElementById('analysisText').innerHTML = "<h3>Analysis Ready</h3><p>Your results are based
+        const ds = [{ label: 'Partner A', data: [partnerA_Scores.int, partnerA_Scores.com, partnerA_Scores.pas], backgroundColor: 'rgba(231, 76, 60, 0.4)', borderColor: '#e74c3c' }];
+        if (partnerB_Scores) ds.push({ label: 'Partner B', data: [partnerB_Scores.int, partnerB_Scores.com, partnerB_Scores.pas], backgroundColor: 'rgba(52, 152, 219, 0.4)', borderColor: '#3498db' });
+        new Chart(ctx, { type: 'radar', data: { labels: ['Intimacy', 'Commitment', 'Passion'], datasets: ds }, options: { scales: { r: { suggestedMax: 25, ticks: { display: false } } }, maintainAspectRatio: false } });
+    }
+</script>
+</body>
+</html>
