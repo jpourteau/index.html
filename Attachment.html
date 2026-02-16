@@ -69,4 +69,55 @@
                     <option value="2">2</option>
                     <option value="3" selected>3 - Neutral</option>
                     <option value="4">4</option>
-                    <option value="5">5 - Strongly Agree
+                    <option value="5">5 - Strongly Agree</option>
+                </select></div>`;
+        });
+    }
+
+    function showResults() {
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step2').classList.add('active');
+        
+        let scores = {sec:0, anx:0, dis:0, fea:0};
+        document.querySelectorAll('.ans').forEach(s => scores[s.dataset.cat] += parseInt(s.value));
+
+        // Determine Prediction
+        let maxScore = Math.max(scores.sec, scores.anx, scores.dis, scores.fea);
+        let style = "";
+        let desc = "";
+
+        if(scores.sec === maxScore) {
+            style = "Secure";
+            desc = "You feel comfortable with intimacy and usually trust your partner's intentions.";
+        } else if(scores.anx === maxScore) {
+            style = "Anxious-Preoccupied";
+            desc = "You value high levels of intimacy and may become overly dependent or worried about abandonment.";
+        } else if(scores.dis === maxScore) {
+            style = "Dismissive-Avoidant";
+            desc = "You equate intimacy with a loss of independence and tend to pull away when things get too close.";
+        } else {
+            style = "Fearful-Avoidant (Disorganized)";
+            desc = "You desire closeness but have a deep-seated fear of being hurt or betrayed.";
+        }
+
+        document.getElementById('style-prediction').innerHTML = `Your primary style is <span class="highlight">${style}</span>. ${desc}`;
+
+        new Chart(document.getElementById('attachmentChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Secure', 'Anxious', 'Dismissive', 'Fearful'],
+                datasets: [{
+                    label: 'Score Profile',
+                    data: [scores.sec, scores.anx, scores.dis, scores.fea],
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    borderColor: '#3498db',
+                    pointBackgroundColor: '#3498db'
+                }]
+            },
+            options: { scales: { r: { min: 0, max: 10, ticks: { display: false } } } }
+        });
+    }
+    init();
+</script>
+</body>
+</html>
