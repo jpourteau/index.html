@@ -5,54 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --d-color: #e74c3c; --i-color: #f1c40f; --s-color: #2ecc71; --c-color: #3498db; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; }
-        #disc-app { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #2c3e50; }
-        .instructions { background: #eef2f3; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 0.9em; border-left: 5px solid #2c3e50; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; }
+        #disc-app { max-width: 850px; margin: auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a2a3a; text-transform: uppercase; letter-spacing: 1px; }
+        .instructions { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 6px solid #1a2a3a; font-size: 0.95em; }
         
-        .q-header { display: grid; grid-template-columns: 2fr 1fr 1fr; font-weight: bold; padding: 10px; background: #2c3e50; color: white; border-radius: 4px; margin-bottom: 10px; }
-        .q-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
-        .q-row:hover { background-color: #f9f9f9; }
-        .word-label { font-weight: 500; }
+        .q-header { display: grid; grid-template-columns: 2.5fr 1fr 1fr; font-weight: bold; padding: 12px; background: #1a2a3a; color: white; border-radius: 5px; margin-top: 25px; }
+        .q-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+        .q-row:nth-child(even) { background-color: #fafafa; }
         .radio-cell { text-align: center; }
+        input[type="radio"] { cursor: pointer; transform: scale(1.2); }
 
-        button { display: block; width: 100%; padding: 15px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
-        button:hover { background: #34495e; }
+        button { display: block; width: 100%; padding: 20px; background: #1a2a3a; color: white; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 40px; transition: 0.3s; }
+        button:hover { background: #2c3e50; transform: translateY(-2px); }
 
         /* Graph Styling */
-        #results { display: none; margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
-        .graph-container { display: flex; height: 350px; margin: 40px 0 60px 80px; border-left: 2px solid #333; border-bottom: 2px solid #333; position: relative; justify-content: space-around; align-items: flex-end; }
+        #results { display: none; margin-top: 50px; border-top: 3px solid #eee; padding-top: 30px; }
+        .graph-outer { position: relative; height: 400px; margin: 50px 0 80px 100px; border-left: 2px solid #444; border-bottom: 2px solid #444; }
+        .graph-container { display: flex; height: 100%; align-items: flex-end; justify-content: space-around; }
         
-        .y-axis { position: absolute; left: -75px; height: 100%; width: 70px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-size: 11px; font-weight: bold; color: #666; text-align: right; }
-        .grid-line { position: absolute; left: 0; width: 100%; border-top: 1px dashed #ddd; z-index: 0; }
+        .y-axis { position: absolute; left: -95px; height: 100%; width: 90px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-size: 12px; font-weight: bold; color: #555; text-align: right; padding-bottom: 5px; }
+        .grid-line { position: absolute; left: 0; width: 100%; border-top: 1px dashed #ccc; z-index: 0; }
 
-        .bar { width: 60px; position: relative; z-index: 1; transition: height 1s ease-out; border-radius: 4px 4px 0 0; }
-        .bar-label { position: absolute; bottom: -35px; width: 100%; text-align: center; font-weight: bold; font-size: 18px; }
-        .bar-value { position: absolute; top: -25px; width: 100%; text-align: center; font-size: 12px; font-weight: bold; }
-
+        .bar { width: 70px; z-index: 1; transition: height 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 5px 5px 0 0; position: relative; }
+        .bar-label { position: absolute; bottom: -40px; width: 100%; text-align: center; font-weight: bold; font-size: 22px; }
+        
         .bar.d { background: var(--d-color); }
         .bar.i { background: var(--i-color); }
         .bar.s { background: var(--s-color); }
         .bar.c { background: var(--c-color); }
+
+        .result-summary { text-align: center; background: #1a2a3a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div id="disc-app">
-    <h2>Personality Discovery Assessment</h2>
+    <h2>DISC Behavioral Assessment</h2>
     <div class="instructions">
-        For each group of words, select <strong>ONE</strong> word that is <strong>MOST</strong> like you and <strong>ONE</strong> word that is <strong>LEAST</strong> like you.
+        <strong>How to complete:</strong> For each of the 24 groups below, look at the four words. Select <strong>ONE</strong> word that is <strong>MOST</strong> like you and <strong>ONE</strong> word that is <strong>LEAST</strong> like you.
     </div>
 
-    <div id="quiz-form">
-        </div>
+    <div id="quiz-form"></div>
 
-    <button onclick="processDISC()">Generate My Profile</button>
+    <button onclick="processDISC()">Generate My DISC Profile</button>
 
     <div id="results">
-        <h3 style="text-align: center;">Your Behavioral Blend: <span id="blend-id">--</span></h3>
+        <div class="result-summary">
+            <h3>Your Behavioral Style Blend: <span id="blend-id">--</span></h3>
+        </div>
         
-        <div class="graph-container">
+        <div class="graph-outer">
             <div class="y-axis">
                 <span>Very Low</span>
                 <span>Low</span>
@@ -65,81 +68,7 @@
             <div class="grid-line" style="bottom: 60%;"></div>
             <div class="grid-line" style="bottom: 80%;"></div>
 
-            <div id="bar-d" class="bar d"><div class="bar-value">0</div><div class="bar-label">D</div></div>
-            <div id="bar-i" class="bar i"><div class="bar-value">0</div><div class="bar-label">I</div></div>
-            <div id="bar-s" class="bar s"><div class="bar-value">0</div><div class="bar-label">S</div></div>
-            <div id="bar-c" class="bar c"><div class="bar-value">0</div><div class="bar-label">C</div></div>
-        </div>
-        <p id="analysis-text" style="line-height: 1.8; text-align: center; padding: 0 20px;"></p>
-    </div>
-</div>
-
-<script>
-    const questions = [
-        {words: ["Gentle", "Persuasive", "Humble", "Decisive"], types: ["S","I","S","D"]},
-        {words: ["Attractive", "Patient", "Independent", "Systematic"], types: ["I","S","D","C"]},
-        {words: ["Outgoing", "Loyal", "Precise", "Direct"], types: ["I","S","C","D"]},
-        {words: ["Open-minded", "Obliging", "Willful", "Cheerful"], types: ["S","S","D","I"]},
-        {words: ["High-spirited", "Orderly", "Accommodating", "Assertive"], types: ["I","C","S","D"]}
-        // Add all 24 following the same pattern...
-    ];
-
-    // For brevity in this example, I am showing 5. 
-    // You would copy/paste the rest of the 24 rows into this array.
-
-    const quizContainer = document.getElementById('quiz-form');
-
-    questions.forEach((q, qIdx) => {
-        let block = document.createElement('div');
-        block.innerHTML = `<div class="q-header">Group ${qIdx + 1} <span>Most</span> <span>Least</span></div>`;
-        
-        q.words.forEach((word, wIdx) => {
-            block.innerHTML += `
-                <div class="q-row">
-                    <span class="word-label">${word}</span>
-                    <div class="radio-cell"><input type="radio" name="most_${qIdx}" value="${q.types[wIdx]}"></div>
-                    <div class="radio-cell"><input type="radio" name="least_${qIdx}" value="${q.types[wIdx]}"></div>
-                </div>
-            `;
-        });
-        quizContainer.appendChild(block);
-    });
-
-    function processDISC() {
-        let scores = { D: 0, I: 0, S: 0, C: 0 };
-        
-        for(let i=0; i<questions.length; i++) {
-            const most = document.querySelector(`input[name="most_${i}"]:checked`);
-            const least = document.querySelector(`input[name="least_${i}"]:checked`);
-            
-            if(most) scores[most.value] += 1;
-            if(least) scores[least.value] -= 1;
-        }
-
-        // Normalize scores for the 5-level graph (Simplified logic for the web tool)
-        // Personality Insights often uses a 0-24 scale.
-        document.getElementById('results').style.display = 'block';
-
-        const traits = ['D', 'I', 'S', 'C'];
-        traits.forEach(t => {
-            // Mapping raw score (approx -5 to 15 in this scale) to 0-100% height
-            let height = ((scores[t] + 5) / 20) * 100; 
-            if(height < 5) height = 5; // Minimum height for visibility
-            if(height > 100) height = 100;
-            
-            const bar = document.getElementById(`bar-${t.toLowerCase()}`);
-            bar.style.height = height + '%';
-            bar.querySelector('.bar-value').innerText = scores[t];
-        });
-
-        // Identify Top 2
-        let sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
-        const blend = sorted[0][0] + sorted[1][0];
-        document.getElementById('blend-id').innerText = blend;
-        
-        window.scrollTo({ top: document.getElementById('results').offsetTop, behavior: 'smooth' });
-    }
-</script>
-
-</body>
-</html>
+            <div class="graph-container">
+                <div id="bar-d" class="bar d"><div class="bar-label">D</div></div>
+                <div id="bar-i" class="bar i"><div class="bar-label">I</div></div>
+                <div id="bar-s" class="bar s">
