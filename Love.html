@@ -1,97 +1,108 @@
-<div id="sternberg-app" style="font-family: sans-serif; max-width: 800px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-    <div style="background: #fff9db; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #f1c40f; font-size: 0.9em;">
-        <strong>Instructions:</strong> Rate 1 (Never) to 5 (Always). This is a private assessment for two partners.
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #disc-container { font-family: sans-serif; max-width: 600px; margin: auto; line-height: 1.6; color: #333; }
+        .question-block { border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .options { display: flex; justify-content: space-between; margin-top: 10px; }
+        .option { text-align: center; flex: 1; }
+        button { background: #2c3e50; color: white; padding: 12px 24px; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; width: 100%; }
+        
+        /* Graph Styling */
+        #results-area { display: none; margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; }
+        .chart-container { display: flex; height: 300px; align-items: flex-end; justify-content: space-around; border-left: 2px solid #333; border-bottom: 2px solid #333; position: relative; margin: 40px 0 20px 60px; }
+        .bar { width: 50px; transition: height 0.5s; position: relative; text-align: center; }
+        .bar-label { position: absolute; bottom: -30px; width: 100%; font-weight: bold; }
+        
+        /* Grid Lines / 5 Areas */
+        .y-axis-labels { position: absolute; left: -55px; height: 100%; display: flex; flex-direction: column-reverse; justify-content: space-between; width: 50px; font-size: 10px; color: #666; }
+        
+        .bar.d { background: #e74c3c; } .bar.i { background: #f1c40f; } .bar.s { background: #2ecc71; } .bar.c { background: #3498db; }
+    </style>
+</head>
+<body>
 
-    <div id="setup-screen" class="screen active">
-        <h2>Love Triangle Assessment</h2>
-        <p>This clinical tool measures three pillars of love. Results are mapped on a 0-10 scale starting from a central baseline.</p>
-        <button onclick="startTest()" style="background: #e74c3c; color: white; padding: 15px 30px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold;">Start Assessment</button>
-    </div>
+<div id="disc-container">
+    <h2>DISC Behavioral Assessment</h2>
+    <p>Select the word that is <strong>MOST</strong> like you in each group.</p>
+    <div id="questions-form"></div>
+    <button onclick="calculateScore()">Show My DISC Profile</button>
 
-    <div id="test-screen" class="screen" style="display:none;">
-        <h3 id="turn-label">Partner A's Turn</h3>
-        <div id="question-area"></div>
-        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-            <button id="back-btn" onclick="movePage(-1)" style="background: #95a5a6; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Back</button>
-            <button id="next-btn" onclick="movePage(1)" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Next</button>
+    <div id="results-area">
+        <h3>Your Personal Style Blend: <span id="blend-name"></span></h3>
+        <div class="chart-container">
+            <div class="y-axis-labels">
+                <span>Very Low</span><span>Low</span><span>Mid Low</span><span>High</span><span>Very High</span>
+            </div>
+            <div id="bar-d" class="bar d"><div class="bar-label">D</div></div>
+            <div id="bar-i" class="bar i"><div class="bar-label">I</div></div>
+            <div id="bar-s" class="bar s"><div class="bar-label">S</div></div>
+            <div id="bar-c" class="bar c"><div class="bar-label">C</div></div>
         </div>
-    </div>
-
-    <div id="result-screen" class="screen" style="display:none;">
-        <h3>Your Relationship Map</h3>
-        <canvas id="loveChart" style="max-height: 400px;"></canvas>
-        <div id="stat-table" style="margin-top: 20px;"></div>
-        <button onclick="location.reload()" style="margin-top:20px; background:#eee; border:none; padding:10px;">Restart</button>
+        <p id="blend-description" style="margin-top:40px; font-style: italic;"></p>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let pA = {int:0, pas:0, com:0}, pB = {int:0, pas:0, com:0};
-    let curIdx = 0, turn = 'A';
-    const qs = [
-        {t: "I have a warm relationship.", c:"int"}, {t: "I receive emotional support.", c:"int"}, {t: "I value my partner.", c:"int"}, {t: "Partner understands me.", c:"int"}, {t: "I trust my partner.", c:"int"},
-        {t: "We are very romantic.", c:"pas"}, {t: "Partner is attractive.", c:"pas"}, {t: "No one else makes me happy.", c:"pas"}, {t: "I think of them often.", c:"pas"}, {t: "We are 'magical'.", c:"pas"},
-        {t: "Confidence in stability.", c:"com"}, {t: "Love will last forever.", c:"com"}, {t: "Commitment is solid.", c:"com"}, {t: "View us as permanent.", c:"com"}, {t: "Feel responsibility.", c:"com"}
+    const data = [
+        {a:"S", b:"I", c:"S", d:"D", words:["Gentle","Persuasive","Humble","Decisive"]},
+        {a:"I", b:"S", c:"D", d:"C", words:["Attractive","Patient","Independent","Systematic"]},
+        {a:"I", b:"S", c:"C", d:"D", words:["Outgoing","Loyal","Precise","Direct"]},
+        {a:"S", b:"S", c:"D", d:"I", words:["Open-minded","Obliging","Willful","Cheerful"]},
+        {a:"I", b:"C", c:"S", d:"D", words:["High-spirited","Orderly","Accommodating","Assertive"]},
+        {a:"S", b:"I", c:"D", d:"C", words:["Calm","Polished","Determined","Law-abiding"]},
+        {a:"I", b:"S", c:"D", d:"C", words:["Expressive","Consistent","Forceful","Disciplined"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Power-oriented","Socially confident","Soft-spoken","Perfectionist"]},
+        {a:"S", b:"I", c:"C", d:"D", words:["Good-natured","High-energy","Objective","Resolute"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Brave","Inspiring","Submissive","Timid"]},
+        {a:"C", b:"I", c:"C", d:"D", words:["Reserved","Talkative","Controlled","Bold"]},
+        {a:"I", b:"S", c:"C", d:"D", words:["Stimulating","Kind","Perceptive","Self-reliant"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Competitive","Joyful","Considerate","Methodical"]},
+        {a:"S", b:"I", c:"D", d:"C", words:["Agreeable","Optimistic","Persistent","Diplomatic"]},
+        {a:"I", b:"S", c:"D", d:"C", words:["Playful","Respectful","Strong-willed","Balanced"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Courageous","Convincing","Amiable","Analytical"]},
+        {a:"S", b:"I", c:"D", d:"C", words:["Adaptable","Enthusiastic","Tenacious","Peaceful"]},
+        {a:"I", b:"S", c:"D", d:"C", words:["Sociable","Patient","Self-assured","Detailed"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Dominant","Popular","Friendly","Fact-finding"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Confident","Fun-loving","Cooperative","Conventional"]},
+        {a:"S", b:"I", c:"D", d:"C", words:["Satisfied","Charming","Eager","Precise"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Risk-taker","Encouraging","Even-tempered","Logical"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Vigorous","Lighthearted","Neighborly","Accurate"]},
+        {a:"D", b:"I", c:"S", d:"C", words:["Results-oriented","Talkative","Steady","Cautious"]}
     ];
 
-    function startTest() {
-        document.getElementById('setup-screen').style.display = 'none';
-        document.getElementById('test-screen').style.display = 'block';
-        showQs();
-    }
-
-    function showQs() {
-        const area = document.getElementById('question-area');
-        const start = curIdx * 5;
-        area.innerHTML = '';
-        qs.slice(start, start+5).forEach((q, i) => {
-            area.innerHTML += `<div style="margin-bottom:15px;"><label>${start+i+1}. ${q.t}</label><br><input type="number" class="val" min="1" max="5" value="3" data-c="${q.c}" style="width:50px; padding:5px; margin-top:5px;"></div>`;
+    const form = document.getElementById('questions-form');
+    data.forEach((q, index) => {
+        let html = `<div class="question-block"><p><strong>Group ${index+1}</strong></p><div class="options">`;
+        ['a','b','c','d'].forEach(letter => {
+            html += `<div class="option"><input type="radio" name="q${index}" value="${q[letter]}"> ${q.words[['a','b','c','d'].indexOf(letter)]}</div>`;
         });
-        document.getElementById('back-btn').style.visibility = curIdx === 0 ? 'hidden' : 'visible';
-        document.getElementById('next-btn').innerText = curIdx === 2 ? (turn === 'A' ? "Next Partner" : "Show Map") : "Next";
-    }
+        html += `</div></div>`;
+        form.innerHTML += html;
+    });
 
-    function movePage(dir) {
-        if(dir === 1 && curIdx === 2) {
-            saveData();
-            if(turn === 'A') { turn = 'B'; curIdx = 0; document.getElementById('turn-label').innerText = "Partner B's Turn"; showQs(); }
-            else { finalize(); }
-            return;
-        }
-        curIdx += dir; showQs();
-    }
-
-    function saveData() {
-        let s = {int:0, pas:0, com:0};
-        document.querySelectorAll('.val').forEach(v => s[v.dataset.c] += parseInt(v.value));
-        if(turn === 'A') pA = s; else pB = s;
-    }
-
-    function finalize() {
-        document.getElementById('test-screen').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'block';
-        const to10 = (v) => ((v-5)/2) / 2; // Converts 5-25 range to 0-10 correctly
-
-        const getPts = (d) => [
-            {x: -to10(d.pas), y: 0}, {x: 0, y: to10(d.int)}, {x: to10(d.com), y: 0}, {x: -to10(d.pas), y: 0}
-        ];
-
-        new Chart(document.getElementById('loveChart'), {
-            type: 'scatter',
-            data: {
-                datasets: [
-                    {label: 'Partner A', data: getPts(pA), showLine:true, borderColor:'#e74c3c', backgroundColor:'rgba(231,76,60,0.3)', fill:true},
-                    {label: 'Partner B', data: getPts(pB), showLine:true, borderColor:'#3498db', backgroundColor:'rgba(52,152,219,0.3)', fill:true}
-                ]
-            },
-            options: {
-                scales: {
-                    x: {min:-10, max:10, title:{display:true, text:'Passion (Left) <--- 0 ---> Commitment (Right)'}},
-                    y: {min:0, max:10, title:{display:true, text:'Intimacy (Up)'}}
-                }
-            }
+    function calculateScore() {
+        let scores = { D:0, I:0, S:0, C:0 };
+        data.forEach((_, i) => {
+            const val = document.querySelector(`input[name="q${i}"]:checked`);
+            if(val) scores[val.value]++;
         });
+
+        document.getElementById('results-area').style.display = 'block';
+        
+        // Update Graph (Scaling max score of 24 to 100%)
+        ['D','I','S','C'].forEach(l => {
+            const height = (scores[l] / 24) * 100;
+            document.getElementById(`bar-${l.toLowerCase()}`).style.height = height + '%';
+        });
+
+        // Determine Blend
+        let sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+        document.getElementById('blend-name').innerText = sorted[0][0] + "/" + sorted[1][0];
+        document.getElementById('blend-description').innerText = "Based on your selections, your primary trait is " + sorted[0][0] + ". This indicates a natural tendency toward " + (sorted[0][0] == 'D' ? 'Results and Control.' : sorted[0][0] == 'I' ? 'Interaction and Influence.' : sorted[0][0] == 'S' ? 'Stability and Support.' : 'Accuracy and Logic.');
     }
 </script>
+
+</body>
+</html>
