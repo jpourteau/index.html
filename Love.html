@@ -3,184 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISC Self-Assessment</title>
+    <title>Professional DISC Assessment</title>
     <style>
-        :root {
-            --d-color: #e74c3c; /* Red */
-            --i-color: #f1c40f; /* Yellow */
-            --s-color: #2ecc71; /* Green */
-            --c-color: #3498db; /* Blue */
-        }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1, h2 { text-align: center; color: #2c3e50; }
-        p.instructions { background: #f9f9f9; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 30px; }
-
-        .question-block { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
-        .question-header { background: #34495e; color: white; padding: 10px 15px; font-weight: bold; display: flex; justify-content: space-between; }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f2f2f2; padding: 10px; text-align: center; font-size: 0.9em; }
-        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; }
-        .descriptor-text { text-align: left; width: 50%; font-weight: 500; }
-
-        .btn-container { text-align: center; margin-top: 30px; }
-        button { background: #27ae60; color: white; border: none; padding: 15px 40px; font-size: 1.2em; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #219150; }
-
-        /* Results Area */
-        #results-area { display: none; margin-top: 40px; padding: 20px; border-top: 2px solid #333; }
-        
-        /* Bar Graph CSS */
-        .chart-container { display: flex; justify-content: space-around; align-items: flex-end; height: 300px; border-bottom: 2px solid #333; border-left: 2px solid #333; margin: 50px 0; padding-top: 20px; position: relative; }
-        .bar-wrapper { display: flex; flex-direction: column; align-items: center; width: 15%; height: 100%; justify-content: flex-end; }
-        .bar { width: 100%; transition: height 1s ease-out; position: relative; border-radius: 5px 5px 0 0; }
-        .bar-label { margin-top: 10px; font-weight: bold; font-size: 1.2em; }
-        
-        /* 5-Level Y-Axis Labels */
-        .y-axis-labels { position: absolute; left: -60px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; width: 50px; text-align: right; font-size: 0.8em; color: #777; }
-
-        .d-bar { background-color: var(--d-color); }
-        .i-bar { background-color: var(--i-color); }
-        .s-bar { background-color: var(--s-color); }
-        .c-bar { background-color: var(--c-color); }
-
-        .print-btn { background: #34495e; margin-top: 20px; }
-
-        @media print {
-            .question-block, button, .instructions { display: none; }
-            #results-area { display: block !important; }
-            .bar { -webkit-print-color-adjust: exact; }
-        }
+        :root { --d-color: #e74c3c; --i-color: #f1c40f; --s-color: #2ecc71; --c-color: #3498db; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; max-width: 850px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #2c3e50; border-bottom: 3px solid #34495e; padding-bottom: 10px; }
+        .instructions { background: #fdf9f0; padding: 20px; border-left: 5px solid #f39c12; margin-bottom: 30px; border-radius: 4px; }
+        .question-block { border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 25px; overflow: hidden; }
+        .question-header { background: #34495e; color: white; padding: 10px 20px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { background: #f8f9fa; padding: 12px; font-size: 0.85em; text-transform: uppercase; color: #666; border-bottom: 2px solid #eee; }
+        td { padding: 15px; border-bottom: 1px solid #f1f1f1; text-align: center; }
+        .descriptor { text-align: left; width: 60%; font-weight: 500; padding-left: 25px; }
+        .submit-container { text-align: center; margin: 40px 0; }
+        .main-btn { background: #27ae60; color: white; border: none; padding: 18px 50px; font-size: 1.3em; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        #results-area { display: none; padding: 30px; border: 2px solid #2c3e50; border-radius: 12px; margin-top: 40px; }
+        .chart-container { display: flex; justify-content: space-around; align-items: flex-end; height: 350px; border-bottom: 3px solid #2c3e50; border-left: 3px solid #2c3e50; margin: 60px 40px 30px 60px; position: relative; }
+        .y-axis { position: absolute; left: -55px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 0.8em; font-weight: bold; color: #7f8c8d; }
+        .bar-wrapper { width: 18%; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+        .bar { width: 80%; border-radius: 6px 6px 0 0; transition: height 1.5s ease-out; min-height: 5px; }
+        .bar-label { margin-top: 15px; font-weight: bold; font-size: 1.4em; }
+        .d-style { background: var(--d-color); } .i-style { background: var(--i-color); } .s-style { background: var(--s-color); } .c-style { background: var(--c-color); }
+        @media print { .question-block, .main-btn, .instructions, h1 { display: none; } #results-area { display: block !important; border: none; } .bar { -webkit-print-color-adjust: exact; } }
     </style>
 </head>
 <body>
 
-    <h1>DISC Personality Assessment</h1>
-    <p class="instructions">
-        <strong>Instructions:</strong> For each of the 24 groups below, choose <strong>one</strong> word that is <u>MOST</u> like you and <strong>one</strong> word that is <u>LEAST</u> like you.
-    </p>
+    <h1>DISC Behavioral Profile</h1>
+    <div class="instructions">Choose <strong>ONE</strong> descriptor that is <strong>Most</strong> like you and <strong>ONE</strong> that is <strong>Least</strong> like you for all 24 groups.</div>
 
-    <div id="assessment-form">
-        </div>
+    <div id="quiz-form"></div>
 
-    <div class="btn-container">
-        <button onclick="calculateResults()">Generate My DISC Profile</button>
+    <div class="submit-container">
+        <button class="main-btn" onclick="processDISC()">Generate Results</button>
     </div>
 
     <div id="results-area">
-        <h2>Your DISC Results</h2>
+        <h2 style="text-align:center">Assessment Results</h2>
         <div class="chart-container">
-            <div class="y-axis-labels">
-                <span>High</span>
-                <span>Above Avg</span>
-                <span>Average</span>
-                <span>Below Avg</span>
-                <span>Low</span>
-            </div>
-            <div class="bar-wrapper">
-                <div id="d-bar" class="bar d-bar" style="height: 0%;"></div>
-                <div class="bar-label">D</div>
-            </div>
-            <div class="bar-wrapper">
-                <div id="i-bar" class="bar i-bar" style="height: 0%;"></div>
-                <div class="bar-label">I</div>
-            </div>
-            <div class="bar-wrapper">
-                <div id="s-bar" class="bar s-bar" style="height: 0%;"></div>
-                <div class="bar-label">S</div>
-            </div>
-            <div class="bar-wrapper">
-                <div id="c-bar" class="bar c-bar" style="height: 0%;"></div>
-                <div class="bar-label">C</div>
-            </div>
+            <div class="y-axis"><span>High</span><span>Above Avg</span><span>Average</span><span>Below Avg</span><span>Low</span></div>
+            <div class="bar-wrapper"><div id="d-bar" class="bar d-style"></div><div class="bar-label">D</div></div>
+            <div class="bar-wrapper"><div id="i-bar" class="bar i-style"></div><div class="bar-label">I</div></div>
+            <div class="bar-wrapper"><div id="s-bar" class="bar s-style"></div><div class="bar-label">S</div></div>
+            <div class="bar-wrapper"><div id="c-bar" class="bar c-style"></div><div class="bar-label">C</div></div>
         </div>
-
-        <div id="analysis-text" style="text-align: center; font-size: 1.2em; margin-bottom: 20px;"></div>
-        
-        <div style="text-align: center;">
-            <button class="print-btn" onclick="window.print()">Print or Save as PDF</button>
-        </div>
+        <div style="text-align:center;"><button class="main-btn" style="background:#34495e" onclick="window.print()">Print / Save Results</button></div>
     </div>
 
-    <script>
-        // Sample DISC word clusters (24 questions) 
-        // Logic: D, I, S, C mapping for each row
-        const questions = [
-            { id: 1, words: [{t:'D', w:'Gentle'}, {t:'I', w:'Persuasive'}, {t:'S', w:'Humble'}, {t:'C', w:'Original'}] },
-            { id: 2, words: [{t:'I', w:'Attractive'}, {t:'C', w:'Patient'}, {t:'D', w:'Receptive'}, {t:'S', w:'Cordial'}] },
-            { id: 3, words: [{t:'S', w:'Easygoing'}, {t:'D', w:'Adventurous'}, {t:'I', w:'Life of the Party'}, {t:'C', w:'Soft-spoken'}] },
-            { id: 4, words: [{t:'C', w:'Conscientious'}, {t:'S', w:'Satisfied'}, {t:'D', w:'Assertive'}, {t:'I', w:'Spirited'}] },
-            // ... (I have initialized the first 4, JavaScript will loop to 24 for the logic)
-        ];
+<script>
+    const data = [
+        {words: [{t:'D', w:'Direct'}, {t:'I', w:'Enthusiastic'}, {t:'S', w:'Steady'}, {t:'C', w:'Analytical'}]},
+        {words: [{t:'I', w:'Persuasive'}, {t:'S', w:'Gentle'}, {t:'C', w:'Humble'}, {t:'D', w:'Decisive'}]},
+        {words: [{t:'S', w:'Friendly'}, {t:'C', w:'Logical'}, {t:'D', w:'Strong-willed'}, {t:'I', w:'Cheerful'}]},
+        {words: [{t:'C', w:'Cautious'}, {t:'D', w:'Determined'}, {t:'I', w:'Convincing'}, {t:'S', w:'Good-natured'}]},
+        {words: [{t:'D', w:'Daring'}, {t:'I', w:'Impulsive'}, {t:'S', w:'Patient'}, {t:'C', w:'Tactful'}]},
+        {words: [{t:'I', w:'Sociable'}, {t:'S', w:'Stable'}, {t:'C', w:'Precise'}, {t:'D', w:'Self-reliant'}]},
+        {words: [{t:'S', w:'Cooperative'}, {t:'C', w:'Orderly'}, {t:'D', w:'Assertive'}, {t:'I', w:'Spirited'}]},
+        {words: [{t:'C', w:'Conscientious'}, {t:'D', w:'Adventurous'}, {t:'I', w:'Playful'}, {t:'S', w:'Satisfied'}]},
+        {words: [{t:'D', w:'Forceful'}, {t:'I', w:'Talkative'}, {t:'S', w:'Modest'}, {t:'C', w:'Systematic'}]},
+        {words: [{t:'I', w:'Magnetic'}, {t:'S', w:'Accommodating'}, {t:'C', w:'Disciplined'}, {t:'D', w:'Bold'}]},
+        {words: [{t:'S', w:'Kind'}, {t:'C', w:'Careful'}, {t:'D', w:'Independent'}, {t:'I', w:'Optimistic'}]},
+        {words: [{t:'C', w:'Perfectionist'}, {t:'D', w:'Competitive'}, {t:'I', w:'Expressive'}, {t:'S', w:'Calm'}]},
+        {words: [{t:'D', w:'Risk-taker'}, {t:'I', w:'Light-hearted'}, {t:'S', w:'Sympathetic'}, {t:'C', w:'Thoughtful'}]},
+        {words: [{t:'I', w:'Inspiring'}, {t:'S', w:'Peaceful'}, {t:'C', w:'Consistent'}, {t:'D', w:'Aggressive'}]},
+        {words: [{t:'S', w:'Tolerant'}, {t:'C', w:'Conventional'}, {t:'D', w:'Commanding'}, {t:'I', w:'Lively'}]},
+        {words: [{t:'C', w:'Accurate'}, {t:'D', w:'Demanding'}, {t:'I', w:'Animated'}, {t:'S', w:'Compliant'}]},
+        {words: [{t:'D', w:'Persistent'}, {t:'I', w:'Outgoing'}, {t:'S', w:'Helpful'}, {t:'C', w:'Objective'}]},
+        {words: [{t:'I', w:'Vibrant'}, {t:'S', w:'Amiable'}, {t:'C', w:'Serious'}, {t:'D', w:'Unyielding'}]},
+        {words: [{t:'S', w:'Reliable'}, {t:'C', w:'Diplomatic'}, {t:'D', w:'Dominant'}, {t:'I', w:'Influential'}]},
+        {words: [{t:'C', w:'Meticulous'}, {t:'D', w:'Directing'}, {t:'I', w:'Charming'}, {t:'S', w:'Supportive'}]},
+        {words: [{t:'D', w:'Action-oriented'}, {t:'I', w:'Promoting'}, {t:'S', w:'Quiet'}, {t:'C', w:'Detailed'}]},
+        {words: [{t:'I', w:'Engaging'}, {t:'S', w:'Submissive'}, {t:'C', w:'Deliberate'}, {t:'D', w:'Authoritative'}]},
+        {words: [{t:'S', w:'Non-confrontational'}, {t:'C', w:'Inquisitive'}, {t:'D', w:'Pioneering'}, {t:'I', w:'Captivating'}]},
+        {words: [{t:'C', w:'Thorough'}, {t:'D', w:'Powerful'}, {t:'I', w:'Gregarious'}, {t:'S', w:'Predictable'}]}
+    ];
 
-        // For brevity in this demo, I am repeating the pattern to reach 24. 
-        // In a live version, you would replace these with your specific Personality Insights Word Lists.
-        for (let i = 5; i <= 24; i++) {
-            questions.push({ id: i, words: questions[(i-1)%4].words });
-        }
-
-        const formContainer = document.getElementById('assessment-form');
-
-        questions.forEach((q, index) => {
-            let html = `
-                <div class="question-block">
-                    <div class="question-header">Question ${q.id}</div>
-                    <table>
-                        <tr><th>Descriptor</th><th>Most (M)</th><th>Least (L)</th></tr>`;
-            
-            q.words.forEach((wordObj, i) => {
-                html += `
-                    <tr>
-                        <td class="descriptor-text">${wordObj.w}</td>
-                        <td><input type="radio" name="q${index}-most" value="${wordObj.t}" required></td>
-                        <td><input type="radio" name="q${index}-least" value="${wordObj.t}" required></td>
-                    </tr>`;
-            });
-
-            html += `</table></div>`;
-            formContainer.innerHTML += html;
+    const container = document.getElementById('quiz-form');
+    data.forEach((item, idx) => {
+        let qHtml = `<div class="question-block"><div class="question-header">Group ${idx + 1}</div><table><tr><th>Descriptor</th><th>Most</th><th>Least</th></tr>`;
+        item.words.forEach(word => {
+            qHtml += `<tr><td class="descriptor">${word.w}</td>
+                <td><input type="radio" name="m${idx}" value="${word.t}" required></td>
+                <td><input type="radio" name="l${idx}" value="${word.t}" required></td></tr>`;
         });
+        qHtml += `</table></div>`;
+        container.innerHTML += qHtml;
+    });
 
-        function calculateResults() {
-            let scores = { D: 0, I: 0, S: 0, C: 0 };
-            
-            for (let i = 0; i < 24; i++) {
-                const most = document.querySelector(`input[name="q${i}-most"]:checked`);
-                const least = document.querySelector(`input[name="q${i}-least"]:checked`);
-                
-                if (!most || !least) {
-                    alert("Please answer all questions (Select one Most and one Least for each).");
-                    return;
-                }
-                
-                if (most.value === least.value) {
-                    alert("On Question " + (i+1) + ", you cannot select the same word for both Most and Least.");
-                    return;
-                }
-
-                scores[most.value]++;
-                // Least selection can either subtract or be a separate tally. 
-                // Dr. Rohm logic usually uses a specific conversion table. 
-                // Here we calculate the "Net" score.
-                scores[least.value]--;
-            }
-
-            // Normalize scores to a 0-100% scale for the 5-level bar graph
-            // 24 is max possible "Most", -24 is min "Least". 
-            const displayResults = (trait) => {
-                let raw = scores[trait];
-                // Convert -24 to 24 range into 0 to 100 percentage
-                let percentage = ((raw + 24) / 48) * 100;
-                document.getElementById(`${trait.toLowerCase()}-bar`).style.height = percentage + "%";
-            };
-
-            ['D', 'I', 'S', 'C'].forEach(displayResults);
-
-            document.getElementById('results-area').style.display = 'block';
-            document.getElementById('analysis-text').innerText = "Assessment Complete. See your DISC blend below.";
-            window.scrollTo(0, document.getElementById('results-area').offsetTop);
+    function processDISC() {
+        let scores = { D: 0, I: 0, S: 0, C: 0 };
+        for(let i=0; i<24; i++) {
+            let m = document.querySelector(`input[name="m${i}"]:checked`);
+            let l = document.querySelector(`input[name="l${i}"]:checked`);
+            if(!m || !l) { alert("Please complete all 24 groups."); return; }
+            if(m.value === l.value) { alert("Group "+(i+1)+": Most and Least cannot be the same."); return; }
+            scores[m.value]++; scores[l.value]--;
         }
-    </script>
+        ['D','I','S','C'].forEach(trait => {
+            let height = ((scores[trait] + 24) / 48) * 100;
+            document.getElementById(trait.toLowerCase()+'-bar').style.height = height + "%";
+        });
+        document.getElementById('results-area').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('results-area').offsetTop, behavior: 'smooth' });
+    }
+</script>
 </body>
 </html>
